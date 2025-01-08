@@ -480,6 +480,9 @@ class Agent:
         Args:
             session_id (str): the session id
         """
+        while self._sessions[session_id].agent_connections:
+            agent_connection = next(iter(self._sessions[session_id].agent_connections.values()))
+            agent_connection.close()
         del self._sessions[session_id]
 
     def use_websocket_platform(self, use_ui: bool = True) -> WebSocketPlatform:

@@ -1,8 +1,12 @@
+import json
 import logging
+import threading
+import time
 from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from pandas import DataFrame
+from websocket import WebSocketApp
 
 from besser.agent.core.message import Message, MessageType, get_message_type
 from besser.agent.core.transition import Transition
@@ -10,6 +14,7 @@ from besser.agent.core.file import File
 from besser.agent.db import DB_MONITORING
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.rag.rag import RAGMessage
+from besser.agent.platforms.payload import PayloadEncoder, Payload, PayloadAction
 
 if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
@@ -45,6 +50,8 @@ class Session:
             state, if there is a transition associated with the same intent, it should not be triggered as the time for
             this intent passed (unless the same intent is detected, in such case the flag will be set to true again).
             Another flag `file_flag` is used for the same purpose but for files sent by the user
+        agent_connections (dict[str, WebSocketApp]): WebSocket client connections to other agent's WebSocket platforms.
+            These connections enable an agent to send messages to other agents.
     """
 
     def __init__(
@@ -65,6 +72,7 @@ class Session:
             'predicted_intent': False,
             'file': False
         }
+        self.agent_connections: dict[str, WebSocketApp] = {}
 
     @property
     def id(self):
@@ -120,8 +128,8 @@ class Session:
 
     @predicted_intent.setter
     def predicted_intent(self, predicted_intent: IntentClassifierPrediction):
-        """
-        Set the last predicted intent for this session.
+        """Set the last predicted intent for this session.
+
         Args:
             predicted_intent (File): the last predicted intent
         """
@@ -207,6 +215,56 @@ class Session:
         """
         # Multi-platform
         self._platform.reply(self, message)
+
+    def create_agent_connection(self, url) -> None:
+        """Create a WebSocket connection to a specific WebSocket URL.
+
+        Args:
+            url (str): the WebSocket server's URL
+        """
+        finished = False
+
+        def on_message(ws, payload_str):
+            payload: Payload = Payload.decode(payload_str)
+            if payload.action == PayloadAction.AGENT_REPLY_STR.value:
+                self._agent.receive_message(self.id, payload.message)
+
+        def on_open(ws):
+            nonlocal finished
+            finished = True
+
+        def on_close(ws, close_status_code, close_msg):
+            del self.agent_connections[url]
+
+        def on_error(ws, error):
+            nonlocal finished
+            finished = True
+
+        ws = WebSocketApp(url, on_message=on_message, on_open=on_open, on_close=on_close, on_error=on_error)
+        websocket_thread = threading.Thread(target=ws.run_forever)
+        websocket_thread.start()
+        self.agent_connections[url] = ws
+        while not finished:
+            # Wait until the connection is open
+            time.sleep(0.01)
+
+    def send_message_to_websocket(self, url: str, message: str) -> None:
+        """Send a message to a WebSocket Server, generally used to send a message to an agent through the WebSocket
+        platform.
+
+        Args:
+            url (str): the WebSocket URL (i.e., the target agent's WebSocket platform URL)
+            message (str): the message to send to the WebSocket server
+        """
+        if url not in self.agent_connections:
+            self.create_agent_connection(url)
+        if url not in self.agent_connections:
+            logging.error(f'Could not connect to {url}')
+            return
+        ws = self.agent_connections[url]
+        payload = Payload(action=PayloadAction.AGENT_REPLY_STR,
+                          message=message)
+        ws.send(json.dumps(payload, cls=PayloadEncoder))
 
     def run_rag(self, message: str = None, llm_prompt: str = None, llm_name: str = None, k: int = None, num_previous_messages: int = None) -> RAGMessage:
         """Run the RAG engine.

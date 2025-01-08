@@ -87,6 +87,8 @@ class WebSocketPlatform(Platform):
                         self._agent.receive_message(session.id, message)
                     elif payload.action == PayloadAction.USER_FILE.value:
                         self._agent.receive_file(session.id, File.decode(payload.message))
+                    elif payload.action == PayloadAction.AGENT_REPLY_STR.value:
+                        self._agent.receive_message(session.id, payload.message)
                     elif payload.action == PayloadAction.RESET.value:
                         self._agent.reset(session.id)
             except ConnectionClosedError:
