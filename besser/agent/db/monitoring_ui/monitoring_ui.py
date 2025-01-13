@@ -1,7 +1,6 @@
 # You may need to add your working directory to the Python path. To do so, uncomment the following lines of code
 # import sys
 # sys.path.append("/Path/to/directory/agentic-framework") # Replace with your directory path
-import logging
 import os
 import subprocess
 import sys
@@ -17,6 +16,7 @@ from besser.agent.db.monitoring_ui.intent_details import intent_details
 from besser.agent.db.monitoring_ui.sidebar import sidebar_menu
 from besser.agent.db.monitoring_ui.table_overview import table_overview
 from besser.agent.db.monitoring_ui.flow_graph import flow_graph
+from besser.agent.exceptions.logger import logger
 
 st.set_page_config(layout="wide")
 
@@ -35,7 +35,7 @@ def start_ui(config_path: str = None, host: str = 'localhost', port: int = 8401)
         subprocess.run(cmd)
 
     thread = threading.Thread(target=run_monitoring_ui)
-    logging.info(f'Monitoring UI starting at {host}:{port}')
+    logger.info(f'Monitoring UI starting at {host}:{port}')
     thread.start()
 
 

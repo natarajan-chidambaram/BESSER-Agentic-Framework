@@ -1,9 +1,16 @@
-import streamlit as st
-import plotly.express as px
+from __future__ import annotations
 
+import streamlit as st
 
 from besser.agent.db.monitoring_db import MonitoringDB, TABLE_INTENT_PREDICTION, TABLE_SESSION, TABLE_CHAT, \
     TABLE_TRANSITION
+from besser.agent.exceptions.logger import logger
+
+try:
+    import plotly.express as px
+except ImportError:
+    logger.warning("plotly dependencies in monitoring_ui could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
 
 
 def home(monitoring_db: MonitoringDB):

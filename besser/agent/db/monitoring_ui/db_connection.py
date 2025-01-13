@@ -1,5 +1,4 @@
 import atexit
-import logging
 from configparser import ConfigParser
 from typing import Any
 
@@ -9,6 +8,7 @@ from besser.agent.core.property import Property
 from besser.agent.db import DB_MONITORING_DIALECT, DB_MONITORING_HOST, DB_MONITORING_PORT, DB_MONITORING_DATABASE, \
     DB_MONITORING_USERNAME, DB_MONITORING_PASSWORD
 from besser.agent.db.monitoring_db import MonitoringDB
+from besser.agent.exceptions.logger import logger
 
 
 def get_property(config: ConfigParser, prop: Property) -> Any:
@@ -26,7 +26,7 @@ def get_property(config: ConfigParser, prop: Property) -> Any:
 
 
 def close_connection(monitoring_db: MonitoringDB):
-    logging.info('Closing DB connection...')
+    logger.info('Closing DB connection...')
     if monitoring_db is not None:
         monitoring_db.close_connection()
 
@@ -48,12 +48,12 @@ def connect_to_db(config_path: str):
             engine = create_engine(url)
             monitoring_db.conn = engine.connect()
             atexit.register(close_connection, monitoring_db)
-            logging.info('Connected to DB')
+            logger.info('Connected to DB')
             return monitoring_db
         except Exception as e:
-            logging.error(f"An error occurred while trying to connect to the monitoring DB in the monitoring UI. "
+            logger.error(f"An error occurred while trying to connect to the monitoring DB in the monitoring UI. "
                           f"See the attached exception:")
-            logging.error(e)
+            logger.error(e)
             return None
     else:
-        logging.error(f"The file {config_path} could not be read")
+        logger.error(f"The file {config_path} could not be read")

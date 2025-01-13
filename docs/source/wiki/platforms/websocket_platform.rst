@@ -126,11 +126,58 @@ The WebSocket platform allows the following kinds of user messages:
 - Voice messages
 - Files
 
+Communication between agents: Multi-agent systems
+-------------------------------------------------
+
+An agent can communicate, not only with human users, but with other agents as well. When we design such agents they
+become a **multi-agent system**.
+
+A multi-agent or agentic system is an approach to solve complex problems by defining multiple agents to tackle specific tasks. These
+tasks divide the main problem into smaller and easier to handle problems. With these systems, we get:
+
+- **Easier agentic design**: divide your problem into small tasks and create a simpler agent for each of them.
+- **Modular design**: each agent acts as an independent actor and can be part of many agentic systems, being called from and when necessary.
+
+The communication between agents is done thanks to the WebSocketPlatform. An agent `A` can send a message to another
+agent `B` by simply connecting to agent `B`'s WebSocket platform:
+
+.. code:: python
+
+    # Agent A
+    def get_weather_body(session: Session):
+        # Send message to Agent B, providing its WebSocketPlatform address and the message
+        session.send_message_to_websocket('ws://localhost:6000', session.message)
+
+Agent `B` will receive the message and will treat it the same way as if it was a human message. It will create a new
+session for agent `A`, detect the intent, transition to another state, etc.
+
+.. code:: python
+
+    # Agent B, let's assume this state is run when it receives agent A's message
+    def generate_weather_body(session: Session):
+        # Some code to get the weather from the message agent A sent
+        temperature = api.get_weather(session.message)
+        # Send the temperature to the session's user (i.e., agent A)
+        session.reply(temperature)
+
+After that, agent `A` will receive agent `B`'s message (the temperature), which will trigger intent classification,
+transition to another state, etc.
+
+.. code:: python
+
+    # Agent A's next state
+    def show_weather_body(session: Session):
+        # Just print what Agent B sent, i.e., the temperature
+        session.reply(session.message)
+
 API References
 --------------
 
 - Agent: :class:`besser.agent.core.agent.Agent`
 - Agent.use_websocket_platform(): :meth:`besser.agent.core.agent.Agent.use_websocket_platform`
+- Session: :class:`besser.agent.core.session.Session`
+- Session.reply(): :meth:`besser.agent.core.session.Session.reply`
+- Session.send_message_to_websocket(): :meth:`besser.agent.core.session.Session.send_message_to_websocket`
 - WebSocketPlatform: :class:`besser.agent.platforms.websocket.websocket_platform.WebSocketPlatform`
 - WebSocketPlatform.reply(): :meth:`besser.agent.platforms.websocket.websocket_platform.WebSocketPlatform.reply`
 - WebSocketPlatform.reply_dataframe(): :meth:`besser.agent.platforms.websocket.websocket_platform.WebSocketPlatform.reply_dataframe`
