@@ -9,9 +9,10 @@ from telegram.ext import CommandHandler, ContextTypes
 
 from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
+from besser.agent.exceptions.logger import logger
 
-# Configure the logging module
-logging.basicConfig(level=logging.INFO, format='{levelname} - {asctime}: {message}', style='{')
+# Configure the logging module (optional)
+logger.setLevel(logging.INFO)
 
 agent = Agent('telegram_agent')
 # Load agent properties stored in a dedicated file

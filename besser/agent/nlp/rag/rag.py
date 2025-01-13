@@ -1,11 +1,8 @@
-import logging
+from __future__ import annotations
+
+from besser.agent.exceptions.logger import logger
 import os
 from typing import TYPE_CHECKING
-
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_core.documents.base import Document
-from langchain_core.vectorstores.base import VectorStore, VectorStoreRetriever
-from langchain_text_splitters.base import TextSplitter
 
 from besser.agent.core.message import Message, MessageType
 from besser.agent.nlp.llm.llm import LLM
@@ -14,6 +11,15 @@ if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
     from besser.agent.core.session import Session
     from besser.agent.nlp.nlp_engine import NLPEngine
+
+try:
+    from langchain_community.document_loaders import PyPDFLoader
+    from langchain_core.documents.base import Document
+    from langchain_core.vectorstores.base import VectorStore, VectorStoreRetriever
+    from langchain_text_splitters.base import TextSplitter
+except ImportError:
+    logger.warning("langchain dependencies in RAG could not be imported. You can install them from the "
+                   "requirements/requirements-extras.txt file")
 
 
 class RAGMessage:

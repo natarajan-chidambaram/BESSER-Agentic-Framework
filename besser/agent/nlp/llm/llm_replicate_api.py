@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import os
 from typing import TYPE_CHECKING
 
-import replicate
-
 from besser.agent import nlp
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.llm.llm import LLM
 from besser.agent.nlp.utils import find_json
@@ -12,6 +13,12 @@ if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
     from besser.agent.core.session import Session
     from besser.agent.nlp.intent_classifier.llm_intent_classifier import LLMIntentClassifier
+
+try:
+    import replicate
+except ImportError:
+    logger.warning("replicate dependencies in LLMReplicate could not be imported. You can install them from the "
+                   "requirements/requirements-llm.txt file")
 
 
 class LLMReplicate(LLM):

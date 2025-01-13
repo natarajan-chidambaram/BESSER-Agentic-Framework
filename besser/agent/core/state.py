@@ -1,5 +1,4 @@
 import inspect
-import logging
 import traceback
 from typing import Any, Callable, TYPE_CHECKING
 
@@ -8,6 +7,7 @@ from besser.agent.core.session import Session
 from besser.agent.core.transition import Transition
 from besser.agent.exceptions.exceptions import BodySignatureError, ConflictingAutoTransitionError, \
     DuplicatedIntentMatchingTransitionError, EventSignatureError, IntentNotFound, StateNotFound
+from besser.agent.exceptions.logger import logger
 from besser.agent.library.event.event_library import auto, intent_matched, variable_matches_operation, file_received
 from besser.agent.library.event.event_template import event_template
 from besser.agent.library.intent.intent_library import fallback_intent
@@ -310,7 +310,7 @@ class State:
         """
         predicted_intent: IntentClassifierPrediction = session.predicted_intent
         if predicted_intent is None:
-            logging.error("Something went wrong, no intent was predicted")
+            logger.error("Something went wrong, no intent was predicted")
             return
         for transition in self.transitions:
             if transition.is_event_true(session):
@@ -320,11 +320,11 @@ class State:
         session.flags['predicted_intent'] = False
         if predicted_intent.intent == fallback_intent:
             # When no transition is activated, run the fallback body of the state
-            logging.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
+            logger.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
             try:
                 self._fallback_body(session)
             except Exception as _:
-                logging.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state "
+                logger.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state "
                               f"'{self._name}' in agent '{self._agent.name}'. See the attached exception:")
                 traceback.print_exc()
 
@@ -344,11 +344,11 @@ class State:
                 return
         session.flags['file'] = False
         # When no transition is activated, run the fallback body of the state
-        logging.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
+        logger.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
         try:
             self._fallback_body(session)
         except Exception as _:
-            logging.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state"
+            logger.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state"
                           f"'{self._name}' in agent '{self._agent.name}'. See the attached exception:")
             traceback.print_exc()
 
@@ -381,11 +381,11 @@ class State:
         Args:
             session (Session): the user session
         """
-        logging.info(f"[{self._name}] Running body {self._body.__name__}")
+        logger.info(f"[{self._name}] Running body {self._body.__name__}")
         try:
             self._body(session)
         except Exception as _:
-            logging.error(f"An error occurred while executing '{self._body.__name__}' of state '{self._name}' in agent '"
+            logger.error(f"An error occurred while executing '{self._body.__name__}' of state '{self._name}' in agent '"
                           f"{self._agent.name}'. See the attached exception:")
             traceback.print_exc()
         self._check_next_transition(session)

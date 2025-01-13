@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
 import numpy as np
-from keras import Sequential
-from keras.src.layers import TextVectorization, Dense, Embedding, GlobalAveragePooling1D
-from keras.src.losses import SparseCategoricalCrossentropy
-from keras.src.optimizers import Adam
-from keras.src.utils import pad_sequences
 
 from besser.agent.core.intent.intent import Intent
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier import IntentClassifier
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.ner.ner_prediction import NERPrediction
@@ -16,6 +13,16 @@ from besser.agent.nlp.preprocessing.text_preprocessing import process_text
 if TYPE_CHECKING:
     from besser.agent.core.state import State
     from besser.agent.nlp.nlp_engine import NLPEngine
+
+try:
+    from keras import Sequential
+    from keras.src.layers import TextVectorization, Dense, Embedding, GlobalAveragePooling1D
+    from keras.src.losses import SparseCategoricalCrossentropy
+    from keras.src.optimizers import Adam
+    from keras.src.utils import pad_sequences
+except ImportError:
+    logger.warning("keras dependencies in SimpleIntentClassifier could not be imported. You can install them from the "
+                   "requirements/requirements-tensorflow.txt file")
 
 
 class SimpleIntentClassifier(IntentClassifier):

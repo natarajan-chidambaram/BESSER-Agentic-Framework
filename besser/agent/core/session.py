@@ -1,5 +1,4 @@
 import json
-import logging
 import threading
 import time
 from datetime import datetime
@@ -11,6 +10,7 @@ from websocket import WebSocketApp
 from besser.agent.core.message import Message, MessageType, get_message_type
 from besser.agent.core.transition import Transition
 from besser.agent.core.file import File
+from besser.agent.exceptions.logger import logger
 from besser.agent.db import DB_MONITORING
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.rag.rag import RAGMessage
@@ -153,7 +153,7 @@ class Session:
                 t = get_message_type(row['type'])
                 chat_history.append(Message(t=t, content=row['content'], is_user=row['is_user'], timestamp=row['timestamp']))
         else:
-            logging.warning('Could not retrieve the chat history from the database.')
+            logger.warning('Could not retrieve the chat history from the database.')
         return chat_history
 
     def save_message(self, message: Message) -> None:
@@ -200,7 +200,7 @@ class Session:
         Args:
             transition (Transition): the transition that points to the agent state to move
         """
-        logging.info(transition.log())
+        logger.info(transition.log())
         self._agent._monitoring_db_insert_transition(self, transition)
         if any(transition.dest is global_state for global_state in self._agent.global_state_component):
             self.set("prev_state", self.current_state)
@@ -259,7 +259,7 @@ class Session:
         if url not in self.agent_connections:
             self.create_agent_connection(url)
         if url not in self.agent_connections:
-            logging.error(f'Could not connect to {url}')
+            logger.error(f'Could not connect to {url}')
             return
         ws = self.agent_connections[url]
         payload = Payload(action=PayloadAction.AGENT_REPLY_STR,

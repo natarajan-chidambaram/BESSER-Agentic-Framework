@@ -30,13 +30,14 @@ Before starting coding the agent itself, we need to import the necessary depende
 
 .. note::
 
-    Optionally, you can set the logging system to display log messages at the INFO level or higher. By doing this, you will
-    see all the agent actions through the terminal, which can help you understand the agent behaviour.
+    Optionally, you can configure the logging system to display log messages at specific levels (INFO, WARNING...).
+    By default, the logger is at INFO level, which displays all the agent actions through the terminal. This level can help you understand the agent behaviour.
 
     .. code:: python
 
         import logging
-        logging.basicConfig(level=logging.INFO, format='{levelname} - {asctime}: {message}', style='{')
+        from besser.agent.exceptions.logger import logger
+        logger.setLevel(logging.WARNING)
 
 
 Create the agent

@@ -1,4 +1,3 @@
-import logging
 import operator
 import threading
 from configparser import ConfigParser
@@ -6,8 +5,6 @@ from typing import Any, Callable, get_type_hints
 
 from besser.agent.core.message import Message
 from besser.agent.core.transition import Transition
-from besser.agent.db import DB_MONITORING
-from besser.agent.db.monitoring_db import MonitoringDB
 from besser.agent.core.entity.entity import Entity
 from besser.agent.core.intent.intent import Intent
 from besser.agent.core.intent.intent_parameter import IntentParameter
@@ -16,8 +13,11 @@ from besser.agent.core.processors.processor import Processor
 from besser.agent.core.session import Session
 from besser.agent.core.state import State
 from besser.agent.core.file import File
+from besser.agent.db import DB_MONITORING
+from besser.agent.db.monitoring_db import MonitoringDB
 from besser.agent.exceptions.exceptions import AgentNotTrainedError, DuplicatedEntityError, DuplicatedInitialStateError, \
     DuplicatedIntentError, DuplicatedStateError, InitialStateNotFound
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_configuration import IntentClassifierConfiguration, \
     SimpleIntentClassifierConfiguration
 from besser.agent.nlp.nlp_engine import NLPEngine
@@ -314,12 +314,12 @@ class Agent:
                     idle.wait(1)
                 except BaseException as e:
                     self.stop()
-                    logging.info(f'{self._name} execution finished due to {e.__class__.__name__}')
+                    logger.info(f'{self._name} execution finished due to {e.__class__.__name__}')
                     break
 
     def stop(self) -> None:
         """Stop the agent execution."""
-        logging.info(f'Stopping agent {self._name}')
+        logger.info(f'Stopping agent {self._name}')
         self._stop_platforms()
         if self.get_property(DB_MONITORING) and self._monitoring_db.connected:
             self._monitoring_db.close_connection()
@@ -338,7 +338,7 @@ class Agent:
         session = self._sessions[session_id]
         new_session = Session(session_id, self, session.platform)
         self._sessions[session_id] = new_session
-        logging.info(f'{self._name} restarted by user {session_id}')
+        logger.info(f'{self._name} restarted by user {session_id}')
         new_session.current_state.run(new_session)
         return new_session
 
@@ -356,12 +356,12 @@ class Agent:
         # TODO: Raise exception SessionNotFound
         message = self.process(session=session, message=message, is_user_message=True)
         session.message = message
-        logging.info(f'Received message: {message}')
+        logger.info(f'Received message: {message}')
         session.predicted_intent = self._nlp_engine.predict_intent(session)
-        logging.info(f'Detected intent: {session.predicted_intent.intent.name}')
+        logger.info(f'Detected intent: {session.predicted_intent.intent.name}')
         self._monitoring_db_insert_intent_prediction(session)
         for parameter in session.predicted_intent.matched_parameters:
-            logging.info(f"Parameter '{parameter.name}': {parameter.value}, info = {parameter.info}")
+            logger.info(f"Parameter '{parameter.name}': {parameter.value}, info = {parameter.info}")
         session.current_state.receive_intent(session)
 
     def receive_file(self, session_id: str, file: File) -> None:
@@ -377,7 +377,7 @@ class Agent:
         file = self.process(session=session, message=file, is_user_message=True)
         session.message = file.name
         session.file = file
-        logging.info('Received file')
+        logger.info('Received file')
         session.current_state.receive_file(session)
 
     def process(self, session: Session, message: Any, is_user_message: bool) -> Any:
@@ -427,9 +427,9 @@ class Agent:
             raise InitialStateNotFound(self)
         self._init_global_states()
         self._nlp_engine.initialize()
-        logging.info(f'{self._name} training started')
+        logger.info(f'{self._name} training started')
         self._nlp_engine.train()
-        logging.info(f'{self._name} training finished')
+        logger.info(f'{self._name} training finished')
         self._trained = True
 
     def _get_session(self, session_id: str) -> Session or None:

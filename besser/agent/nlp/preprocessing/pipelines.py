@@ -1,9 +1,8 @@
-import logging
-
 import nltk
 import snowballstemmer
 
-lang_map_stemmers = snowballstemmer._languages
+from besser.agent.exceptions.logger import logger
+
 lang_map_tokenizers = nltk.SnowballStemmer.languages
 lang_map = {
     'en': 'english',
@@ -31,5 +30,5 @@ def create_or_get_stemmer(lang: str = 'english') -> snowballstemmer:
         return stemmers[lang]
     stemmer = snowballstemmer.stemmer(lang)
     stemmers[lang] = stemmer
-    logging.info(f'Stemmer added: {lang}')
+    logger.info(f'Stemmer added: {lang}')
     return stemmer

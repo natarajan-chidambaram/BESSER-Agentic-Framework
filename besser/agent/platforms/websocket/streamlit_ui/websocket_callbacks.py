@@ -1,18 +1,29 @@
+from __future__ import annotations
+
 import base64
 import json
 from datetime import datetime
 from io import StringIO
 
-import cv2
 import numpy as np
 import pandas as pd
-import plotly
 
 from besser.agent.core.message import MessageType, Message
+from besser.agent.exceptions.logger import logger
 from besser.agent.platforms.payload import PayloadAction, Payload
 from besser.agent.platforms.websocket.streamlit_ui.session_management import get_streamlit_session
 from besser.agent.platforms.websocket.streamlit_ui.vars import QUEUE
 
+try:
+    import cv2
+except ImportError:
+    logger.warning("cv2 dependencies in websocket_callbacks.py could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
+try:
+    import plotly
+except ImportError:
+    logger.warning("plotly dependencies in websocket_callbacks.py could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
 
 def on_message(ws, payload_str):
     # https://github.com/streamlit/streamlit/issues/2838

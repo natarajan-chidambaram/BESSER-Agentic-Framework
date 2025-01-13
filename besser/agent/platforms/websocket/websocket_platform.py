@@ -1,13 +1,12 @@
+from __future__ import annotations
+
 import base64
 import inspect
 import json
-import logging
 import os
 from datetime import datetime
 
-import cv2
 import numpy as np
-import plotly
 import subprocess
 import threading
 from typing import TYPE_CHECKING
@@ -19,6 +18,7 @@ from websockets.sync.server import ServerConnection, WebSocketServer, serve
 from besser.agent.core.message import Message, MessageType
 from besser.agent.core.session import Session
 from besser.agent.exceptions.exceptions import PlatformMismatchError
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.rag.rag import RAGMessage
 from besser.agent.platforms import websocket
 from besser.agent.platforms.payload import Payload, PayloadAction, PayloadEncoder
@@ -28,6 +28,17 @@ from besser.agent.core.file import File
 
 if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
+
+try:
+    import cv2
+except ImportError:
+    logger.warning("cv2 dependencies in WebSocketPlatform could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
+try:
+    import plotly
+except ImportError:
+    logger.warning("plotly dependencies in WebSocketPlatform could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
 
 
 class WebSocketPlatform(Platform):
@@ -93,12 +104,12 @@ class WebSocketPlatform(Platform):
                         self._agent.reset(session.id)
             except ConnectionClosedError:
                 pass
-                # logging.error(f'The client closed unexpectedly')
+                # logger.error(f'The client closed unexpectedly')
             except Exception as e:
                 pass
-                # logging.error("Server Error:", e)
+                # logger.error("Server Error:", e)
             finally:
-                # logging.info(f'Session finished')
+                # logger.info(f'Session finished')
                 self._agent.delete_session(session.id)
                 del self._connections[session.id]
         self._message_handler = message_handler
@@ -128,11 +139,11 @@ class WebSocketPlatform(Platform):
                 ])
 
             thread = threading.Thread(target=run_streamlit)
-            logging.info(f'Running Streamlit UI in another thread')
+            logger.info(f'Running Streamlit UI in another thread')
             thread.start()
             # To avoid re-running the streamlit process, set self._use_ui to False
             self._use_ui = False
-        logging.info(f'{self._agent.name}\'s WebSocketPlatform starting at ws://{self._host}:{self._port}')
+        logger.info(f'{self._agent.name}\'s WebSocketPlatform starting at ws://{self._host}:{self._port}')
         self.running = True
         self._websocket_server.serve_forever()
 
@@ -142,7 +153,7 @@ class WebSocketPlatform(Platform):
             conn = self._connections[conn_id]
             conn.close_socket()
         self._websocket_server.shutdown()
-        logging.info(f'{self._agent.name}\'s WebSocketPlatform stopped')
+        logger.info(f'{self._agent.name}\'s WebSocketPlatform stopped')
 
     def _send(self, session_id, payload: Payload) -> None:
         session = self._agent.get_or_create_session(session_id=session_id, platform=self)

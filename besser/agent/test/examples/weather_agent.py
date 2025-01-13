@@ -7,10 +7,11 @@ import random
 
 from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 
-# Configure the logging module
-logging.basicConfig(level=logging.INFO, format='{levelname} - {asctime}: {message}', style='{')
+# Configure the logging module (optional)
+logger.setLevel(logging.INFO)
 
 agent = Agent('weather_agent')
 # Load agent properties stored in a dedicated file

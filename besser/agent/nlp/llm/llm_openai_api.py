@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import json
 from typing import TYPE_CHECKING
 
-from openai import OpenAI
-
 from besser.agent import nlp
 from besser.agent.core.message import MessageType, Message
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.llm.llm import LLM
 
@@ -12,6 +13,12 @@ if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
     from besser.agent.core.session import Session
     from besser.agent.nlp.intent_classifier.llm_intent_classifier import LLMIntentClassifier
+
+try:
+    from openai import OpenAI
+except ImportError:
+    logger.warning("openai dependencies in LLMOpenAI could not be imported. You can install them from the "
+                   "requirements/requirements-llm.txt file")
 
 
 class LLMOpenAI(LLM):

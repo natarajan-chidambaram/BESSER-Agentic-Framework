@@ -6,13 +6,15 @@ import logging
 
 from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_configuration import LLMIntentClassifierConfiguration
 from besser.agent.nlp.llm.llm_huggingface import LLMHuggingFace
 from besser.agent.nlp.llm.llm_huggingface_api import LLMHuggingFaceAPI
 from besser.agent.nlp.llm.llm_openai_api import LLMOpenAI
 from besser.agent.nlp.llm.llm_replicate_api import LLMReplicate
 
-logging.basicConfig(level=logging.INFO, format='{levelname} - {asctime}: {message}', style='{')
+# Configure the logging module (optional)
+logger.setLevel(logging.INFO)
 
 # Create the agent
 agent = Agent('llm_agent')

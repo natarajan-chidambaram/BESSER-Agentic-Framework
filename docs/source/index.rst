@@ -32,6 +32,37 @@ Requirements
 
     pip install besser-bot-framework
 
+This command will install the base package with the core dependencies, but will omit some optional dependencies.
+
+You can add the following tags to the installation:
+
+- ``extras``: It will install the necessary dependencies for some additional agent functionalities (e.g., :doc:`RAG <wiki/nlp/rag>`, :doc:`wiki/nlp/speech2text`, plotly, opencv).
+- ``llms``: Necessary dependencies to run LLMs (openai, replicate, transformers)
+- ``tensorflow``: Necessary for the :any:`simple-intent-classifier`. Since tensorflow is a very heavy package, this allows to install it only if necessary
+- ``torch``: To install PyTorch (necessary for some HuggingFace models)
+- ``docs``: Dependencies to compile the project documentation (the one you are reading now)
+- ``all``: **It installs all the dependencies at once**
+
+This is how you would install the package with additional dependencies:
+
+.. code:: bash
+
+    pip install besser-bot-framework[extras,llms,tensorflow]
+
+If you cloned the repository, you can install the dependencies in 2 ways:
+
+.. code:: bash
+
+    pip install -e .[extras]
+
+or by referencing to the requirements files:
+
+.. code:: bash
+
+    pip install -r requirements/requirements-extras.txt
+
+Note that if you want to set your bot's language to Luxembourgish and are using the package installed with pip, you will need to manually install the [spellux](https://github.com/questoph/spellux) library.
+
 Where to start?
 ~~~~~~~~~~~~~~~
 

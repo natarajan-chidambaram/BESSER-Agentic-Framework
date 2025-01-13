@@ -1,16 +1,27 @@
+from __future__ import annotations
+
 import io
 from typing import TYPE_CHECKING
 
-import librosa
-from transformers import AutoProcessor, TFAutoModelForSpeechSeq2Seq, logging
-
 from besser.agent import nlp
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.speech2text.speech2text import Speech2Text
 
 if TYPE_CHECKING:
     from besser.agent.nlp.nlp_engine import NLPEngine
 
-logging.set_verbosity_error()
+try:
+    import librosa
+except ImportError:
+    logger.warning("librosa dependencies in HFSpeech2Text could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
+
+try:
+    from transformers import AutoProcessor, TFAutoModelForSpeechSeq2Seq, logging
+    logging.set_verbosity_error()
+except ImportError:
+    logger.warning("transformers dependencies in HFSpeech2Text could not be imported. You can install them from "
+                   "the requirements/requirements-llms.txt file")
 
 
 class HFSpeech2Text(Speech2Text):

@@ -14,6 +14,7 @@ from besser.agent.core.message import Message, MessageType
 from besser.agent.core.session import Session
 from besser.agent.core.file import File
 from besser.agent.exceptions.exceptions import PlatformMismatchError
+from besser.agent.exceptions.logger import logger
 from besser.agent.platforms import telegram
 from besser.agent.platforms.payload import Payload, PayloadAction
 from besser.agent.platforms.platform import Platform
@@ -153,14 +154,14 @@ class TelegramPlatform(Platform):
         asyncio.set_event_loop(self._event_loop)
 
     def start(self) -> None:
-        logging.info(f'{self._agent.name}\'s TelegramPlatform starting')
+        logger.info(f'{self._agent.name}\'s TelegramPlatform starting')
         self.running = True
         self._telegram_app.run_polling(stop_signals=None)
 
     def stop(self):
         self._event_loop.stop()
         self.running = False
-        logging.info(f'{self._agent.name}\'s TelegramPlatform stopped')
+        logger.info(f'{self._agent.name}\'s TelegramPlatform stopped')
 
     def _send(self, session_id: str, payload: Payload) -> None:
         session = self._agent.get_or_create_session(session_id=session_id, platform=self)

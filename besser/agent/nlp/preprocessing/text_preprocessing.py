@@ -1,5 +1,4 @@
 from typing import TYPE_CHECKING
-from nltk.tokenize import word_tokenize
 
 from besser.agent import nlp
 from besser.agent.nlp.preprocessing.pipelines import create_or_get_stemmer, lang_map, lang_map_tokenizers
@@ -26,6 +25,8 @@ def process_text(text: str, nlp_engine: 'NLPEngine') -> str:
 
 
 def stem_text(text: str, language: str) -> str:
+    from nltk.tokenize import word_tokenize
+
     stemmer_language: str = 'english'  # default set to english
     if language in lang_map:
         stemmer_language = lang_map[language]

@@ -1,7 +1,7 @@
-import logging
 import traceback
 from typing import Callable, TYPE_CHECKING
 
+from besser.agent.exceptions.logger import logger
 from besser.agent.library.event.event_library import auto, intent_matched, variable_matches_operation
 
 if TYPE_CHECKING:
@@ -110,7 +110,7 @@ class Transition:
         try:
             return self.event(session, self.event_params)
         except Exception as e:
-            logging.error(f"An error occurred while executing '{self.event.__name__}' event from state "
+            logger.error(f"An error occurred while executing '{self.event.__name__}' event from state "
                           f"'{self.source.name}'. See the attached exception:")
             traceback.print_exc()
         return False

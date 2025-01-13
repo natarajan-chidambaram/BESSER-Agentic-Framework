@@ -1,7 +1,7 @@
-import logging
 import traceback
 from typing import TYPE_CHECKING
 
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp import NLP_LANGUAGE
 from besser.agent.nlp.intent_classifier.intent_classifier import IntentClassifier
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
@@ -158,7 +158,7 @@ The output format is JSON, not List.
                 parameters=parameters
             )
         except Exception as _:
-            logging.error(f"An error occurred while predicting the intent in state '{self._state.name}' with LLM "
+            logger.error(f"An error occurred while predicting the intent in state '{self._state.name}' with LLM "
                           f"Intent Classifier '{self._state.ic_config.llm_name}'. See the attached exception:")
             traceback.print_exc()
             intent_classifier_results: list[IntentClassifierPrediction] = []

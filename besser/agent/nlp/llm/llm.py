@@ -1,7 +1,7 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 
 if TYPE_CHECKING:
@@ -87,7 +87,7 @@ class LLM(ABC):
         Returns:
             str: the LLM output
         """
-        logging.warning(f'Chat not implemented in {self.__class__.__name__}')
+        logger.warning(f'Chat not implemented in {self.__class__.__name__}')
         return None
 
     def intent_classification(
@@ -110,7 +110,7 @@ class LLM(ABC):
         Returns:
             list[IntentClassifierPrediction]: the list of predictions made by the LLM.
         """
-        logging.warning(f'Intent Classification not implemented in {self.__class__.__name__}')
+        logger.warning(f'Intent Classification not implemented in {self.__class__.__name__}')
         return []
 
     def add_user_context(self, session: 'Session', context: str, context_name: str) -> None:

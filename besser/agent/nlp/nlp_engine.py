@@ -2,12 +2,12 @@ import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Hide Tensorflow logs
 
-import logging
 from typing import Any, TYPE_CHECKING
 
 from besser.agent import nlp
 from besser.agent.core.property import Property
 from besser.agent.core.session import Session
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier import IntentClassifier
 from besser.agent.nlp.intent_classifier.intent_classifier_configuration import LLMIntentClassifierConfiguration, \
     SimpleIntentClassifierConfiguration
@@ -98,13 +98,13 @@ class NLPEngine:
     def train(self) -> None:
         """Train the NLP components of the NLPEngine."""
         self._ner.train()
-        logging.info(f"NER successfully trained.")
+        logger.info(f"NER successfully trained.")
         for state, intent_classifier in self._intent_classifiers.items():
             if not state.intents:
-                logging.info(f"Intent classifier in {state.name} not trained (no intents found).")
+                logger.info(f"Intent classifier in {state.name} not trained (no intents found).")
             else:
                 intent_classifier.train()
-                logging.info(f"Intent classifier in {state.name} successfully trained.")
+                logger.info(f"Intent classifier in {state.name} successfully trained.")
 
     def predict_intent(self, session: Session) -> IntentClassifierPrediction:
         """Predict the intent of a user message.
@@ -162,5 +162,5 @@ class NLPEngine:
             str: the speech transcription
         """
         text = self._speech2text.speech2text(speech)
-        logging.info(f"[Speech2Text] Transcribed audio message: '{text}'")
+        logger.info(f"[Speech2Text] Transcribed audio message: '{text}'")
         return text

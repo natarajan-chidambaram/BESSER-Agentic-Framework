@@ -1,14 +1,21 @@
+from __future__ import annotations
+
 import io
-import logging
 from typing import TYPE_CHECKING
 
-import speech_recognition as sr
-
 from besser.agent import nlp
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.speech2text.speech2text import Speech2Text
 from besser.agent.exceptions.exceptions import SREngineNotFound
+
 if TYPE_CHECKING:
     from besser.agent.nlp.nlp_engine import NLPEngine
+
+try:
+    import speech_recognition as sr
+except ImportError:
+    logger.warning("speech_recognition dependencies in APISpeech2Text could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
 
 # TODO: Once implemented, add the other engines here
 engines = ["Google Speech Recognition"]
@@ -57,5 +64,5 @@ class APISpeech2Text(Speech2Text):
             except Exception as e:
                 # Currently throws an error when starting the agent
                 # Or when trying to create an audio file on firefox
-                logging.error('Empty audio file"')
+                logger.error('Empty audio file"')
         return text

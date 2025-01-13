@@ -8,8 +8,7 @@ import streamlit as st
 from besser.agent.core.file import File
 from besser.agent.core.message import Message, MessageType
 from besser.agent.platforms.payload import Payload, PayloadAction, PayloadEncoder
-from besser.agent.platforms.websocket.streamlit_ui.vars import TYPING_TIME, BUTTONS, HISTORY, QUEUE, WEBSOCKET, ASSISTANT, \
-    USER
+from besser.agent.platforms.websocket.streamlit_ui.vars import TYPING_TIME, HISTORY, QUEUE, WEBSOCKET, ASSISTANT, USER
 
 user_type = {
     0: ASSISTANT,

@@ -6,7 +6,6 @@ core
 
    core/agent
    core/file
-   core/llmagent
    core/message
    core/property
    core/session

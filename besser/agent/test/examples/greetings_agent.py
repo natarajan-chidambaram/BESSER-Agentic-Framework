@@ -6,9 +6,10 @@ import logging
 
 from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
+from besser.agent.exceptions.logger import logger
 
-# Configure the logging module
-logging.basicConfig(level=logging.INFO, format='{levelname} - {asctime}: {message}', style='{')
+# Configure the logging module (optional)
+logger.setLevel(logging.INFO)
 
 # Create the agent
 agent = Agent('greetings_agent')

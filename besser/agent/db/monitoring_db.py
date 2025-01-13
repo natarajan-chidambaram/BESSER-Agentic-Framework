@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
@@ -11,6 +10,7 @@ from besser.agent.core.message import Message
 from besser.agent.core.session import Session
 from besser.agent.core.state import State
 from besser.agent.core.transition import Transition
+from besser.agent.exceptions.logger import logger
 from besser.agent.db import DB_MONITORING_DIALECT, DB_MONITORING_PORT, DB_MONITORING_HOST, DB_MONITORING_DATABASE, \
     DB_MONITORING_USERNAME, DB_MONITORING_PASSWORD
 from besser.agent.library.event.event_library import intent_matched, variable_matches_operation
@@ -67,9 +67,9 @@ class MonitoringDB:
             self.conn = engine.connect()
             self.connected = True
         except Exception as e:
-            logging.error(f"An error occurred while trying to connect to the monitoring DB in agent '{agent.name}'. "
+            logger.error(f"An error occurred while trying to connect to the monitoring DB in agent '{agent.name}'. "
                           f"See the attached exception:")
-            logging.error(e)
+            logger.error(e)
 
     def initialize_db(self) -> None:
         """Initialize the monitoring database, creating the tables if necessary."""
@@ -278,7 +278,7 @@ class MonitoringDB:
             self.conn.commit()
             return result
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.conn.rollback()
             return None
 

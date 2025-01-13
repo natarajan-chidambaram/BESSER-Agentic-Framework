@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from transformers import pipeline
-
 from besser.agent.core.message import MessageType, Message
+from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.llm.llm import LLM
 from besser.agent.nlp.utils import merge_llm_consecutive_messages, find_json
@@ -11,6 +12,12 @@ if TYPE_CHECKING:
     from besser.agent.core.agent import Agent
     from besser.agent.core.session import Session
     from besser.agent.nlp.intent_classifier.llm_intent_classifier import LLMIntentClassifier
+
+try:
+    from transformers import pipeline
+except ImportError:
+    logger.warning("transformers dependencies in LLMHuggingFace could not be imported. You can install them from the "
+                   "requirements/requirements-llm.txt file")
 
 
 class LLMHuggingFace(LLM):
