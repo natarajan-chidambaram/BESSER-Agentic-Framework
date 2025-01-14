@@ -9,13 +9,13 @@ the intent predictions,... or gather some information about the users, like what
 many interactions they need in order to achieve their goal when using the agent... You can rely on a database to store
 usage information for later monitoring and analysis!
 
-BBF agents have a :class:`MonitoringDB <besser.agent.db.monitoring_db.MonitoringDB>` attribute (optionally used) in charge
+BAF agents have a :class:`MonitoringDB <besser.agent.db.monitoring_db.MonitoringDB>` attribute (optionally used) in charge
 of managing the DB connection and the data insertion. When running the agent, right after its training, it connects to
 the DB (:meth:`MonitoringDB.connect_to_db() <besser.agent.db.monitoring_db.MonitoringDB.connect_to_db()>`) and initializes
 it, creating the tables if they don't exist
 (:meth:`MonitoringDB.initialize_db() <besser.agent.db.monitoring_db.MonitoringDB.initialize_db()>`). This process is
 hidden from the user. To activate it, you simply need to define the
-:any:`configuration properties <properties-database>` to properly connect to the database, BBF is in charge of the rest.
+:any:`configuration properties <properties-database>` to properly connect to the database, BAF is in charge of the rest.
 
 
 Database Schema
@@ -154,7 +154,7 @@ Every time a user :doc:`transitions <../core/transitions>` from one agent state 
 of the followed paths within the agent's state machine.
 
 Each transition contains the source and destination state names and the name of the event that triggered it. For some
-predefined events of BBF, some additional information is stored in the *info* column:
+predefined events of BAF, some additional information is stored in the *info* column:
 
 - :any:`intent_matching <besser.agent.library.event.event_library.intent_matched>`:
   the name of the matched intent is stored.

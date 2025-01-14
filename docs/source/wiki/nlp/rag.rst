@@ -25,7 +25,7 @@ The key components of RAG are:
 - **Retriever**: Given an input, it gets the most similar chunks from the vector store by comparing the vector embeddings.
 - **Generator (LLM)**: It receives the original query and the retrieved data, and generates the answer.
 
-BBF allows you to integrate this process into your agent. Our implementation uses
+BAF allows you to integrate this process into your agent. Our implementation uses
 `LangChain <https://python.langchain.com/>`_, which is a framework for developing apps with LLMs. It comes with a
 wide library of resources we can use to customize our RAG's components.
 
@@ -99,7 +99,7 @@ LangChain provides different splitters for specific splitting criteria:
 LLM
 ---
 
-An LLM, using the BBF :doc:`LLM wrappers <llm>`:
+An LLM, using the BAF :doc:`LLM wrappers <llm>`:
 
 .. code:: python
 

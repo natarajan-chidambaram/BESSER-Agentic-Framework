@@ -5,11 +5,11 @@ We provide a Graphical User Interface  for the :doc:`monitoring_db`, which is ai
 It is just an example to illustrate some possible applications of the Monitoring DB. You can also create your own custom
 dashboard for the Monitoring DB, or contact us with ideas you would like to include!
 
-The UI is built with `Streamlit <https://streamlit.io/>`_, and included in the BBF library (`source code <https://github.com/BESSER-PEARL/BESSER-Bot-Framework/tree/main/besser/agent/db/monitoring_ui>`_)
+The UI is built with `Streamlit <https://streamlit.io/>`_, and included in the BAF library (`source code <https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/tree/main/besser/agent/db/monitoring_ui>`_)
 
 It can be run in 2 different ways:
 
-1. If you cloned the BBF repository, open a terminal, navigate to the monitoring_ui directory and run the main script.
+1. If you cloned the BAF repository, open a terminal, navigate to the monitoring_ui directory and run the main script.
 
 Three parameters are mandatory:
 

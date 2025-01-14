@@ -19,7 +19,7 @@ def main():
         # If they are not provided, we use default values
         agent_name = 'Agent Demo'
     st.header(agent_name)
-    st.markdown("[Github](https://github.com/BESSER-PEARL/BESSER-Bot-Framework)")
+    st.markdown("[Github](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework)")
 
     initialize()
     sidebar()

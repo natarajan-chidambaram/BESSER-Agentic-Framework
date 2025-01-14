@@ -26,7 +26,7 @@ Receiving and Sending Files
 ---------------------------
 
 If a developer wants to add the handling of receiving files to a platform, apart from the platform specific
-implementation (that is independent of the BBF), the received file will need to be transformed into a file object
+implementation (that is independent of the BAF), the received file will need to be transformed into a file object
 and forwarded to the running agent as follows ("agent" will be the running agent instance that should be available
 in the platform): 
 

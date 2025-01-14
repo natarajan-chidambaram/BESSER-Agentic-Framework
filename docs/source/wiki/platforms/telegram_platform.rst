@@ -4,7 +4,7 @@ Telegram platform
 The Telegram Platform allows an agent to communicate with the users using `Telegram <https://telegram.org/>`_.
 
 Telegram is a great platform for chatbots/agents. You can create a Telegram bot through the
-`Bot Father <https://core.telegram.org/bots/tutorial>`_ and then, link it to our BBF agent. This way,
+`Bot Father <https://core.telegram.org/bots/tutorial>`_ and then, link it to our BAF agent. This way,
 you can define your agent architecture and logics, and then use your Telegram bot as the communication channel.
 
 Our Telegram Platform uses the `python-telegram-bot <https://github.com/python-telegram-bot/python-telegram-bot>`_
@@ -74,7 +74,7 @@ Handlers
 The python-telegram-bot library (Telegram Bot API Python wrapper under our Telegram Platform) uses
 `handlers <https://docs.python-telegram-bot.org/en/latest/telegram.ext.handlers-tree.html>`_ to handle
 bot updates (e.g., the user sends a text message, an image, a command, etc.). Our Telegram Platform interface allows
-you to add custom handlers to your agent, so this feature is not lost when using BBF.
+you to add custom handlers to your agent, so this feature is not lost when using BAF.
 
 This is an example handler function that will be executed when the agent receives the ``/help`` command:
 
@@ -108,10 +108,10 @@ Our Telegram Platform has the following built in handlers:
 Telegram Wrapper
 ----------------
 
-The BBF Telegram Platform wraps some functionalities of the python-telegram-bot library (such as adding handlers or
+The BAF Telegram Platform wraps some functionalities of the python-telegram-bot library (such as adding handlers or
 replying messages, files or locations), but not all of them.
 
-In order to use other features not included in BBF yet, we included a `__getattr__` function in the TelegramPlatform
+In order to use other features not included in BAF yet, we included a `__getattr__` function in the TelegramPlatform
 class. It forwards the method calls not implemented in TelegramPlatform to the underlying Telegram bot
 (`ExtBot <https://docs.python-telegram-bot.org/en/v20.6/telegram.ext.extbot.html>`_ class, which is an extension of the
 `Bot <https://docs.python-telegram-bot.org/en/v20.6/telegram.bot.html>`_ class).

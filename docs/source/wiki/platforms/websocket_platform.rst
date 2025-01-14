@@ -16,7 +16,7 @@ The next figure shows how this connection works:
 
 User Interface
 
-BBF comes with some User Interfaces (WebSocket clients) to use the WebSocket platform.
+BAF comes with some User Interfaces (WebSocket clients) to use the WebSocket platform.
 
 Of course, you are free to use or create your own UI as long as it has a WebSocket client that connects to the agent's WebSocket server.
 

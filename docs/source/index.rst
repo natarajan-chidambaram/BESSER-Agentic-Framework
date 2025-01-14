@@ -1,5 +1,5 @@
-BESSER Bot Framework
-====================
+BESSER Agentic Framework
+========================
 
 .. toctree::
    :maxdepth: 1
@@ -12,7 +12,7 @@ BESSER Bot Framework
    api
 
 
-The `BESSER Bot Framework (BBF) <https://github.com/BESSER-PEARL/bot-framework>`_ is part of the BESSER
+The `BESSER Agentic Framework (BAF) <https://github.com/BESSER-PEARL/BESSER-Agentic-Framework>`_ is part of the BESSER
 (Building Better Smart Software Faster) project at the Luxembourg Institute of Science and Technology (LIST).
 It aims to make the design and implementation of agents easier and accessible for everyone.
 
@@ -26,11 +26,11 @@ Requirements
 - Recommended: Create a virtual environment
   (e.g. `venv <https://docs.python.org/3/library/venv.html>`_,
   `conda <https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_)
-- Install the `package <https://pypi.org/project/besser-bot-framework/>`_:
+- Install the `package <https://pypi.org/project/besser-agentic-framework/>`_:
 
 .. code:: bash
 
-    pip install besser-bot-framework
+    pip install besser-agentic-framework
 
 This command will install the base package with the core dependencies, but will omit some optional dependencies.
 
@@ -47,7 +47,7 @@ This is how you would install the package with additional dependencies:
 
 .. code:: bash
 
-    pip install besser-bot-framework[extras,llms,tensorflow]
+    pip install besser-agentic-framework[extras,llms,tensorflow]
 
 If you cloned the repository, you can install the dependencies in 2 ways:
 
@@ -61,7 +61,7 @@ or by referencing to the requirements files:
 
     pip install -r requirements/requirements-extras.txt
 
-Note that if you want to set your bot's language to Luxembourgish and are using the package installed with pip, you will need to manually install the [spellux](https://github.com/questoph/spellux) library.
+Note that if you want to set your agent's language to Luxembourgish and are using the package installed with pip, you will need to manually install the [spellux](https://github.com/questoph/spellux) library.
 
 Where to start?
 ~~~~~~~~~~~~~~~

@@ -92,7 +92,7 @@ It is also possible to only add context information for a specific prompt:
 Available LLMs
 --------------
 
-BBF comes with LLM wrappers that provide the necessary methods to use them. All LLM wrappers must implement the
+BAF comes with LLM wrappers that provide the necessary methods to use them. All LLM wrappers must implement the
 :class:`~besser.agent.nlp.llm.llm.LLM` class, which comes with the following methods to be implemented:
 
 - :meth:`~besser.agent.nlp.llm.llm.LLM.initialize`: Initialize the LLM.
@@ -101,7 +101,7 @@ BBF comes with LLM wrappers that provide the necessary methods to use them. All 
 - :meth:`~besser.agent.nlp.llm.llm.LLM.intent_classification`: Predict the intent of a given message (it allows the
   :any:`llm-intent-classifier` to use this LLM). Not mandatory to implement.
 
-These are the currently available LLM wrappers in BBF:
+These are the currently available LLM wrappers in BAF:
 
 - :class:`~besser.agent.nlp.llm.llm_openai_api.LLMOpenAI`: For `OpenAI <https://platform.openai.com/docs/models>`_ LLMs
 - :class:`~besser.agent.nlp.llm.llm_huggingface.LLMHuggingFace`: For `HuggingFace <https://huggingface.co/>`_ LLMs locally deployed

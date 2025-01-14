@@ -9,7 +9,7 @@ In NLP, this problem is known as Text Classification.
 To successfully do this, it is necessary to provide a set of example sentences for each intent
 (this is the training data).
 
-In this section, we delve into the different intent classifiers available in BBF. Each one has its pros and cons.
+In this section, we delve into the different intent classifiers available in BAF. Each one has its pros and cons.
 
 Each agent state has its own intent classifier. This is because each intent classifier is trained to recognize only those
 intents allowed in its state. This way, you can choose the intent classifier that better suits for each state depending

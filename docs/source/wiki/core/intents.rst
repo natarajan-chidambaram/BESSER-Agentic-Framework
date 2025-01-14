@@ -2,7 +2,7 @@ Intents
 =======
 
 Intents define the *intentions* or *goals* the user can express to an agent. In this article we review how to create
-intents with BBF.
+intents with BAF.
 
 Simple intents
 --------------

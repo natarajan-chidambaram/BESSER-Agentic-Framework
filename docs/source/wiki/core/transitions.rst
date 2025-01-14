@@ -31,7 +31,7 @@ When the user sends a message to the agent, it gets the user intent and uses it 
 user intent matches with a specified transition intent, the agent moves to the specified transition destination state.
 
 Therefore, :any:`intent_matching <besser.agent.library.event.event_library.intent_matched>` is a pre-defined event
-integrated into BBF, so you only need to define the transition:
+integrated into BAF, so you only need to define the transition:
 
 .. code:: python
 

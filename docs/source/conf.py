@@ -55,13 +55,13 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_title = f"BBF {release}"
+html_title = f"BAF {release}"
 html_favicon = './img/favicon.png'
 
 # html_logo = "img/besser_logo_light.svg"
 html_theme_options = {
-    "light_logo": "bbf_logo_light.svg",
-    "dark_logo": "bbf_logo_dark.svg"
+    "light_logo": "baf_logo_light.svg",
+    "dark_logo": "baf_logo_dark.svg"
 }
 html_theme = 'furo'
 html_static_path = ['_static']
@@ -177,4 +177,4 @@ def linkcode_resolve(domain, info):
         return None
     start, end = lines[1], lines[1] + len(lines[0]) - 1
     filename = info['module'].replace('.', '/')
-    return f"https://github.com/BESSER-PEARL/BESSER-Bot-Framework/blob/v{release}/{filename}.py#L{start}-L{end}"
+    return f"https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/v{release}/{filename}.py#L{start}-L{end}"

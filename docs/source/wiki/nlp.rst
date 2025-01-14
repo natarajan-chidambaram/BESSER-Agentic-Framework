@@ -1,7 +1,7 @@
 NLP
 ===
 
-BBF agents are powered by NLP (Natural Language Processing) tools that provide them with the necessary
+BAF agents are powered by NLP (Natural Language Processing) tools that provide them with the necessary
 capabilities to understand and generate human language.
 
 - **Intent Classification** to recognize the user intentions, implicit in messages.
