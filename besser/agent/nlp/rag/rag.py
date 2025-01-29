@@ -134,7 +134,7 @@ class RAG:
         chunked_documents = self.splitter.split_documents(documents)
         n_chunks = len(chunked_documents)
         self.vector_store.add_documents(chunked_documents)
-        logging.info(f'[RAG] Added {n_chunks} chunks to RAG\'s vector store. Total: {len(self.vector_store.get()["documents"])}')
+        logger.info(f'[RAG] Added {n_chunks} chunks to RAG\'s vector store. Total: {len(self.vector_store.get()["documents"])}')
         return n_chunks
 
     def run_retrieval(self, question: str, k: int = None) -> list[Document]:

@@ -51,7 +51,8 @@ NLP_PRE_PROCESSING = Property(SECTION_NLP, 'nlp.pre_processing', bool, True)
 Whether to use text pre-processing or not. `Stemming <https://en.wikipedia.org/wiki/Stemming>`_ is the process of reducing
 inflected (or sometimes derived) words to their word stem, base or root form.
 
-Currently, only :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier.SimpleIntentClassifier` and
+Currently, only :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_pytorch.SimpleIntentClassifierTorch`,
+:class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_tensorflow.SimpleIntentClassifierTF` and
 :class:`~besser.agent.nlp.ner.simple_ner.SimpleNER` use this property. If
 :class:`~besser.agent.nlp.intent_classifier.llm_intent_classifier.LLMIntentClassifier` is used, this property is ignored.
 

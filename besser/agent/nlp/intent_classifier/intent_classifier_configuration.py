@@ -16,57 +16,70 @@ class IntentClassifierConfiguration(ABC):
 class SimpleIntentClassifierConfiguration(IntentClassifierConfiguration):
     """The Simple Intent Classifier Configuration class.
 
-    It allows the customization of a
-    :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier.SimpleIntentClassifier`.
+    It allows the customization of a Simple Intent Classifier
+    (:class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_tensorflow.SimpleIntentClassifierTF` or
+    :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_pytorch.SimpleIntentClassifierTorch`).
 
     Args:
-        num_words (int): Max num of words to keep in the index of words
+        framework (str): The framework to implement the Simple Intent Classifier ('tensorflow' or 'pytorch'). Defaults
+            to 'pytorch'
         num_epochs (int): Number of epochs to be run during training
         embedding_dim (int): Number of embedding dimensions to be used when embedding the words
+        hidden_dim (int): Number of dimensions for the hidden layers
         input_max_num_tokens (int): Max length for the vector representing a sentence
         discard_oov_sentences (bool): whether to automatically assign zero probabilities to sentences with all tokens
             being oov ones or not
         check_exact_prediction_match (bool): Whether to check for exact match between the sentence to predict and one of
             the training sentences or not
-        activation_last_layer (str): The activation function of the last layer
-        activation_hidden_layers (str): The activation function of the hidden layers
+        activation_last_layer (str): The activation function of the last layer. Allowed values are 'softmax' (sum of
+            all predictions equals to 1) and 'softmax' (sum of all predictions can be different of 1). Defaults to
+            'sigmoid'
         lr (float): Learning rate for the optimizer
 
     Attributes:
-        num_words (int): Max num of words to keep in the index of words
+        framework (str): The framework to implement the Simple Intent Classifier ('tensorflow' or 'pytorch'). Defaults
+            to 'pytorch'
         num_epochs (int): Number of epochs to be run during training
         embedding_dim (int): Number of embedding dimensions to be used when embedding the words
+        hidden_dim (int): Number of dimensions for the hidden layers
         input_max_num_tokens (int): Max length for the vector representing a sentence
         discard_oov_sentences (bool): whether to automatically assign zero probabilities to sentences with all tokens
             being oov ones or not
         check_exact_prediction_match (bool): Whether to check for exact match between the sentence to predict and one of
             the training sentences or not
-        activation_last_layer (str): The activation function of the last layer
-        activation_hidden_layers (str): The activation function of the hidden layers
+        activation_last_layer (str): The activation function of the last layer. Allowed values are 'softmax' (sum of
+            all predictions equals to 1) and 'softmax' (sum of all predictions can be different of 1). Defaults to
+            'sigmoid'
         lr (float): Learning rate for the optimizer
     """
 
     def __init__(
             self,
-            num_words: int = 1000,
+            framework: str = 'pytorch',
             num_epochs: int = 300,
             embedding_dim: int = 128,
+            hidden_dim: int = 128,
             input_max_num_tokens: int = 15,
             discard_oov_sentences: bool = True,
             check_exact_prediction_match: bool = True,
             activation_last_layer: str = 'sigmoid',
-            activation_hidden_layers: str = 'tanh',
             lr: float = 0.001,
     ):
         super().__init__()
-        self.num_words: int = num_words
+        if framework not in ['pytorch', 'tensorflow']:
+            raise ValueError(f'Error while creating SimpleIntentClassifierConfiguration: {framework} is not a valid '
+                             f'framework. Allowed values are: [pytorch, tensorflow]')
+        if activation_last_layer not in ['sigmoid', 'softmax']:
+            raise ValueError(f'Error while creating SimpleIntentClassifierConfiguration: {activation_last_layer} is not a valid '
+                             f'activation function for the last layer. Allowed values are: [sigmoid, softmax]')
+        self.framework: str = framework
         self.num_epochs: int = num_epochs
         self.embedding_dim: int = embedding_dim
+        self.hidden_dim: int = hidden_dim
         self.input_max_num_tokens: int = input_max_num_tokens
         self.discard_oov_sentences: bool = discard_oov_sentences
         self.check_exact_prediction_match: bool = check_exact_prediction_match
         self.activation_last_layer: str = activation_last_layer
-        self.activation_hidden_layers: str = activation_hidden_layers
         self.lr: float = lr
 
 

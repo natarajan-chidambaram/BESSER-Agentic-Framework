@@ -35,8 +35,8 @@ You can add the following tags to the installation:
 
 - ``extras``: It will install the necessary dependencies for some additional agent functionalities (e.g., RAG, Speech-to-Text, plotly, opencv).
 - ``llms``: Necessary dependencies to run LLMs (openai, replicate, transformers)
-- ``tensorflow``: Necessary for the SimpleIntentClassifier. Since tensorflow is a very heavy package, this allows to install it only if necessary
-- ``torch``: To install PyTorch (necessary for some HuggingFace models)
+- ``torch``: To install PyTorch, necessary for the Simple Intent Classifier (PyTorch implementation) and HuggingFace models
+- ``tensorflow``: Necessary for the Simple Intent Classifier (Tensorflow implementation) and some HuggingFace models. Since tensorflow is a very heavy package, this allows to install it only if necessary
 - ``docs``: Dependencies to compile the project documentation (the one you are reading now)
 - ``all``: **It installs all the dependencies at once**
 
