@@ -109,13 +109,15 @@ class LLMIntentClassifierConfiguration(IntentClassifierConfiguration):
     def __init__(
             self,
             llm_name: str,
-            parameters: dict = {},
+            parameters: dict = None,
             use_intent_descriptions: bool = True,
             use_training_sentences: bool = True,
             use_entity_descriptions: bool = True,
             use_entity_synonyms: bool = True
     ):
         super().__init__()
+        if parameters is None:
+            parameters = {}
         self.llm_name: str = llm_name
         self.parameters: dict = parameters
         self.use_intent_descriptions: bool = use_intent_descriptions
