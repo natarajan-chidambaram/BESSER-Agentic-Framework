@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import numpy as np
 
+from besser.agent import nlp
 from besser.agent.core.intent.intent import Intent
 from besser.agent.exceptions.logger import logger
 from besser.agent.nlp.intent_classifier.intent_classifier import IntentClassifier
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction
 from besser.agent.nlp.ner.ner_prediction import NERPrediction
-from besser.agent.nlp.preprocessing.text_preprocessing import process_text
+from besser.agent.nlp.preprocessing.text_preprocessing import process_text, tokenize
 
 from nltk.tokenize import word_tokenize
 from collections import Counter
@@ -59,11 +60,12 @@ class TextClassifier(nn.Module):
 
 class TextDataset(Dataset):
 
-    def __init__(self, texts, labels, vocab, max_len):
+    def __init__(self, texts, labels, vocab, max_len, language):
         self.texts = texts
         self.labels = labels
         self.vocab = vocab
         self.max_len = max_len
+        self.language = language
 
     def __len__(self):
         return len(self.texts)
@@ -73,7 +75,7 @@ class TextDataset(Dataset):
         label = self.labels[idx]
 
         # Tokenize and pad text
-        tokens = word_tokenize(text)
+        tokens = tokenize(text, self.language)
         tokens = [self.vocab.get(token, self.vocab[SimpleIntentClassifierTorch.UNK]) for token in tokens]
         tokens = tokens[:self.max_len] + [self.vocab[SimpleIntentClassifierTorch.PAD]] * (self.max_len - len(tokens))
 
@@ -139,12 +141,16 @@ class SimpleIntentClassifierTorch(IntentClassifier):
         # Preprocessing
         le = LabelEncoder()
         self.__total_labels_encoded = le.fit_transform(self.__total_labels)
-        all_tokens = [token for text in self.__total_training_sentences for token in word_tokenize(text)]
+        language: str = self._nlp_engine.get_property(nlp.NLP_LANGUAGE)
+        all_tokens = [token for text in self.__total_training_sentences for token in tokenize(text, language)]
         self.__vocab = {word: idx for idx, (word, _) in enumerate(Counter(all_tokens).items(), 1)}
         self.__vocab[SimpleIntentClassifierTorch.PAD] = 0
         self.__vocab[SimpleIntentClassifierTorch.UNK] = len(self.__vocab)
         for training_sentence in self.__total_training_sentences:
-            self.__total_training_sequences.append([self.__vocab.get(token, self.__vocab[SimpleIntentClassifierTorch.UNK]) for token in word_tokenize(training_sentence)])
+            self.__total_training_sequences.append([
+                self.__vocab.get(token, self.__vocab[SimpleIntentClassifierTorch.UNK])
+                for token in tokenize(training_sentence, language)
+            ])
 
         # Model Initialization
         self._model = TextClassifier(
@@ -158,7 +164,13 @@ class SimpleIntentClassifierTorch(IntentClassifier):
 
     def train(self) -> None:
         # Dataset and DataLoader
-        dataset = TextDataset(self.__total_training_sentences, self.__total_labels_encoded, self.__vocab, self._state.ic_config.input_max_num_tokens)
+        dataset = TextDataset(
+            self.__total_training_sentences,
+            self.__total_labels_encoded,
+            self.__vocab,
+            self._state.ic_config.input_max_num_tokens,
+            self._nlp_engine.get_property(nlp.NLP_LANGUAGE)
+        )
         dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(self._model.parameters(), lr=self._state.ic_config.lr)
@@ -178,13 +190,14 @@ class SimpleIntentClassifierTorch(IntentClassifier):
     def predict(self, message: str) -> list[IntentClassifierPrediction]:
         message = process_text(message, self._nlp_engine)
         intent_classifier_results: list[IntentClassifierPrediction] = []
+        language: str = self._nlp_engine.get_property(nlp.NLP_LANGUAGE)
 
         # We try to replace all potential entity value with the corresponding entity name
         ner_prediction: NERPrediction = self._state.agent.nlp_engine.ner.predict(self._state, message)
         for (ner_sentence, intents) in ner_prediction.ner_sentences.items():
             run_full_prediction: bool = True
             self._model.eval()
-            tokens = word_tokenize(message)
+            tokens = tokenize(message, language)
             tokens = [self.__vocab.get(token, self.__vocab[SimpleIntentClassifierTorch.UNK]) for token in tokens]
             tokens = tokens[:self._state.ic_config.input_max_num_tokens]
 
@@ -215,8 +228,6 @@ class SimpleIntentClassifierTorch(IntentClassifier):
                     prediction = output.squeeze().tolist()
                     if isinstance(prediction, float):
                         prediction = [prediction]
-                    print(prediction)
-                    print(sum(prediction))
 
             for intent in intents:
                 # It is impossible to have a duplicated intent in another ner_sentence
