@@ -1,11 +1,16 @@
-Multi-Agent System
-==================
+Your first multi-agent
+======================
 
 An agent on its own can be smart, but things get really interesting when multiple agents team up.
 
-BAF allows building multi-agent systems where each agent has a specific role, shares information, and works together to get the job done more efficiently.
+BAF allows building **multi-agent systems** where each agent has a specific role, shares information, and works together to get the job done more efficiently.
 
 In this section, we will walk through a **running example** to see how agents interact in action. The system we are looking at is designed to help developers write source code.
+
+.. note::
+
+   This tutorial may be too advanced for BAF beginners. We recommend you understanding the core ideas of agents (:doc:`../wiki` section) before diving
+   into this example.
 
 
 This system is composed by 3 agents:
@@ -18,7 +23,7 @@ This system is composed by 3 agents:
 - **Code Reviewer Agent**: This agent receives a piece of code and is in charge of finding errors or bugs, leveraging a specialized LLM.
 
 
-.. figure:: ../img/multiagent.png
+.. figure:: img/multiagent.png
    :alt: Example Multi-Agent system for code development
 
    Multi-Agent System
@@ -49,7 +54,7 @@ The following sections show the code implementation for each agent.
 Developer Main Agent
 --------------------
 
-.. literalinclude:: ../../../besser/agent/test/examples/multiagent/main_agent.py
+.. literalinclude:: ../../besser/agent/test/examples/multiagent/main_agent.py
    :language: python
    :linenos:
 
@@ -57,7 +62,7 @@ Developer Main Agent
 Coder Agent
 -----------
 
-.. literalinclude:: ../../../besser/agent/test/examples/multiagent/coder_agent.py
+.. literalinclude:: ../../besser/agent/test/examples/multiagent/coder_agent.py
    :language: python
    :linenos:
 
@@ -65,6 +70,6 @@ Coder Agent
 Code Reviewer Agent
 -------------------
 
-.. literalinclude:: ../../../besser/agent/test/examples/multiagent/reviewer_agent.py
+.. literalinclude:: ../../besser/agent/test/examples/multiagent/reviewer_agent.py
    :language: python
    :linenos:

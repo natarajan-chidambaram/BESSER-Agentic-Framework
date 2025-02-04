@@ -12,4 +12,3 @@ agents
    examples/llm_agent
    examples/rag_agent
    examples/telegram_agent
-   examples/multiagent

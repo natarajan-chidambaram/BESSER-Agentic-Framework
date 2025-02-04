@@ -6,6 +6,7 @@ BESSER Agentic Framework
    :hidden:
 
    your_first_agent
+   your_first_multiagent
    wiki
    examples
    release_notes
@@ -75,7 +76,6 @@ Example agents
 
 - :doc:`examples/greetings_agent`: Very simple agent for the first contact with the framework
 - :doc:`examples/weather_agent`: Introducing :doc:`entities <wiki/core/entities>`
-- :doc:`examples/multiagent`: Introducing :any:`communication between agents <communication-between-agents>`
 - :doc:`examples/llm_agent`: Introducing :doc:`Large Language Models (LLMs) <wiki/nlp/llm>`
 - :doc:`examples/rag_agent`: Introducing :doc:`Retrieval Augmented Generation (RAG) <wiki/nlp/rag>`
 - :doc:`examples/telegram_agent`: Introducing the :doc:`wiki/platforms/telegram_platform`
