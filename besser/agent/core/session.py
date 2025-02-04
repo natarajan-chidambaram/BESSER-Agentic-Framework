@@ -192,7 +192,10 @@ class Session:
         Args:
             key (str): the entry key
         """
-        del self._dictionary[key]
+        try:
+            del self._dictionary[key]
+        except Exception as e:
+            return None
 
     def move(self, transition: Transition) -> None:
         """Move to another agent state.
@@ -256,6 +259,7 @@ class Session:
             url (str): the WebSocket URL (i.e., the target agent's WebSocket platform URL)
             message (str): the message to send to the WebSocket server
         """
+        logger.info(f'Sending message to {url}')
         if url not in self.agent_connections:
             self.create_agent_connection(url)
         if url not in self.agent_connections:
