@@ -126,6 +126,8 @@ The WebSocket platform allows the following kinds of user messages:
 - Voice messages
 - Files
 
+.. _communication-between-agents:
+
 Communication between agents: Multi-agent systems
 -------------------------------------------------
 

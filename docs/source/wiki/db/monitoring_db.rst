@@ -259,7 +259,7 @@ performance.
       - 1
       - hi
       - 2024-05-02 14:53:57
-      - SimpleIntentClassifier
+      - SimpleIntentClassifierTorch
       - hello_intent
       - 0.9
 
@@ -267,7 +267,7 @@ performance.
       - 1
       - good
       - 2024-05-02 14:54:25
-      - SimpleIntentClassifier
+      - SimpleIntentClassifierTorch
       - good_intent
       - 1.0
 
@@ -275,7 +275,7 @@ performance.
       - 2
       - Welcome!
       - 2024-05-02 15:57:01
-      - SimpleIntentClassifier
+      - SimpleIntentClassifierTorch
       - fallback_intent
       - 0.7
 
@@ -283,7 +283,7 @@ performance.
       - 3
       - What is the weather in Lux and Bcn?
       - 2024-05-02 19:23:06
-      - SimpleIntentClassifier
+      - SimpleIntentClassifierTorch
       - weather_intent
       - 0.9
 

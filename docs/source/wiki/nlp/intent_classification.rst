@@ -27,13 +27,13 @@ This is how you can create an intent classifier configuration:
 
 .. code:: python
 
-    from besser.agent.nlp.intent_classifier.intent_classifier_configuration import LLMIntentClassifierConfiguration
+    from besser.agent.nlp.intent_classifier.intent_classifier_configuration import SimpleIntentClassifierConfiguration
 
     agent = Agent('example_agent')
 
     simple_config = SimpleIntentClassifierConfiguration(
+        framework='pytorch',
         activation_last_layer='sigmoid',
-        activation_hidden_layers='tanh',
         lr=0.001
     )
 
@@ -51,7 +51,8 @@ Or a default configuration for all states (note that this would replace any prev
 
 .. note::
 
-    If you don't specify any configuration for a state, the :any:`simple-intent-classifier` will be selected by default.
+    If you don't specify any configuration for a state, the :any:`simple-intent-classifier` (PyTorch implementation)
+    will be selected by default.
 
 .. note::
 
@@ -64,11 +65,32 @@ Or a default configuration for all states (note that this would replace any prev
 Simple Intent Classifier
 ------------------------
 
-The :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier.SimpleIntentClassifier` is based on a basic
-`Keras <https://keras.io/>`_ neural network as the prediction model. It is trained with the intent's training sentences.
+The Simple Intent Classifier is based on a basic neural network as the prediction model. It is trained with the intent's
+training sentences. When running, it is able to predict the intent of a message if it is close to any of the training
+sentences.
+
+We provide 2 implementations of the same intent classifier:
+
+- :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_pytorch.SimpleIntentClassifierTorch`:
+  PyTorch-based implementation. It uses a `PyTorch module <https://pytorch.org/docs/stable/generated/torch.nn.Module>`_
+  as the prediction model.
+
+- :class:`~besser.agent.nlp.intent_classifier.simple_intent_classifier_tensorflow.SimpleIntentClassifierTF`:
+  Tensorflow-based implementation. It uses a `Keras <https://keras.io/>`_ neural network as the prediction model.
+
+.. note::
+
+    Even though both intent classifiers implement the same neural network architecture, the performance may not be equal.
+
+    Also, the training process is not deterministic and performance may vary between different agent executions.
+
+    The neural network architecture can be customized.
+
+The Simple Intent Classifier is based on a basic
+neural network as the prediction model. It is trained with the intent's training sentences.
 When running, it is able to predict the intent of a message if it is close to any of the training sentences.
 
-You can see all the configuration possibilities of this intent classifier here:
+You can see all the configuration possibilities of this intent classifier here (including the framework selection):
 :class:`~besser.agent.nlp.intent_classifier.intent_classifier_configuration.SimpleIntentClassifierConfiguration`
 
 The :obj:`~besser.agent.nlp.NLP_PRE_PROCESSING` agent property influences the performance of this intent classifier. If you
@@ -218,6 +240,8 @@ API References
 - LLMOpenAI: :class:`besser.agent.nlp.llm.llm_openai_api.LLMIntentClassifierConfiguration`
 - Session: :class:`besser.agent.core.session.Session`
 - SimpleIntentClassifierConfiguration: :class:`besser.agent.nlp.intent_classifier.intent_classifier_configuration.SimpleIntentClassifierConfiguration`
+- SimpleIntentClassifierTF: :class:`besser.agent.nlp.intent_classifier.simple_intent_classifier_tensorflow.SimpleIntentClassifierTF`
+- SimpleIntentClassifierTorch: :class:`besser.agent.nlp.intent_classifier.simple_intent_classifier_pytorch.SimpleIntentClassifierTorch`
 - State: :class:`besser.agent.core.state.State`
 - State.set_body(): :meth:`besser.agent.core.state.State.set_body`
 - State.when_intent_matched_go_to(): :meth:`besser.agent.core.state.State.when_intent_matched_go_to`

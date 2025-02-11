@@ -1,10 +1,32 @@
+import re
 from typing import TYPE_CHECKING
+
+from nltk import word_tokenize
 
 from besser.agent import nlp
 from besser.agent.nlp.preprocessing.pipelines import create_or_get_stemmer, lang_map, lang_map_tokenizers
 
 if TYPE_CHECKING:
     from besser.agent.nlp.nlp_engine import NLPEngine
+
+
+def tokenize(text: str, language: str = 'en') -> list[str]:
+    """Tokenize a text (i.e., split into tokens)
+
+    Args:
+        text (str): the text to tokenize
+        language (str): the text language (defaults to english)
+
+    Returns:
+        list(str): list of tokens
+    """
+    if language in lang_map:
+        language = lang_map[language]
+    return [
+        token.lower()
+        for token in word_tokenize(text, language=language)
+        if re.match(r'^\w+$', token)  # Keeps only alphanumeric words (removes punctuation)
+    ]
 
 
 def process_text(text: str, nlp_engine: 'NLPEngine') -> str:
@@ -25,15 +47,13 @@ def process_text(text: str, nlp_engine: 'NLPEngine') -> str:
 
 
 def stem_text(text: str, language: str) -> str:
-    from nltk.tokenize import word_tokenize
-
     stemmer_language: str = 'english'  # default set to english
     if language in lang_map:
         stemmer_language = lang_map[language]
     stemmer = create_or_get_stemmer(stemmer_language)
     # not every stemming language has a corresponsing tokenizer, should we simply use a basic tokenizer for languages that do not possess the fitting tokenizer?
     if language in lang_map_tokenizers:
-        tokens: list[str] = word_tokenize(text, language=stemmer_language)
+        tokens: list[str] = tokenize(text, language=stemmer_language)
     else:
         tokens: list[str] = text.split()
     stemmed_sentence: list[str] = []
