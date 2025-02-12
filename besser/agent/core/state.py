@@ -359,7 +359,6 @@ class State:
         When receiving an event it looks for the state's transition whose trigger event matches the first event.
         If not we pop the current event and check for the next one.
         The passed items are discarded, unless no transition is made.
-        The fallback body is when no event transition triggers. (to discuss)
 
         Args:
             session (Session): the user session that received the event
@@ -375,14 +374,14 @@ class State:
             fallback_deque.appendleft(session.events.pop())
         session.events.extend(fallback_deque)
         session.flags['event'] = False
-        # When no transition is activated, run the fallback body of the state
-        # Or may be not, to discuss
-        logger.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
-        try:
-            self._fallback_body(session)
-        except Exception as _:
-            logger.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state"
-                          f"'{self._name}' in agent '{self._agent.name}'. See the attached exception:")
+
+        # When no transition is activated and the event not broadcasted, run the fallback body of the state
+        # logger.info(f"[{self._name}] Running fallback body {self._fallback_body.__name__}")
+        # try:
+        #     self._fallback_body(session)
+        # except Exception as _:
+        #     logger.error(f"An error occurred while executing '{self._fallback_body.__name__}' of state"
+        #                   f"'{self._name}' in agent '{self._agent.name}'. See the attached exception:")
 
     def _check_next_transition(self, session: Session) -> None:
         """Check whether the first defined transition of the state is an `auto` transition, and if so, move to its
