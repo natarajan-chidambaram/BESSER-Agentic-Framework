@@ -10,7 +10,8 @@ nlp
    nlp/intent_classifier_configuration
    nlp/intent_classifier_prediction
    nlp/llm_intent_classifier
-   nlp/simple_intent_classifier
+   nlp/simple_intent_classifier_pytorch
+   nlp/simple_intent_classifier_tensorflow
    nlp/llm
    nlp/llm_huggingface
    nlp/llm_huggingface_api

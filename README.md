@@ -35,8 +35,8 @@ You can add the following tags to the installation:
 
 - ``extras``: It will install the necessary dependencies for some additional agent functionalities (e.g., RAG, Speech-to-Text, plotly, opencv).
 - ``llms``: Necessary dependencies to run LLMs (openai, replicate, transformers)
-- ``tensorflow``: Necessary for the SimpleIntentClassifier. Since tensorflow is a very heavy package, this allows to install it only if necessary
-- ``torch``: To install PyTorch (necessary for some HuggingFace models)
+- ``torch``: To install PyTorch, necessary for the Simple Intent Classifier (PyTorch implementation) and HuggingFace models
+- ``tensorflow``: Necessary for the Simple Intent Classifier (Tensorflow implementation) and some HuggingFace models. Since tensorflow is a very heavy package, this allows to install it only if necessary
 - ``docs``: Dependencies to compile the project documentation (the one you are reading now)
 - ``all``: **It installs all the dependencies at once**
 
@@ -67,5 +67,7 @@ Note that if you want to set your agent's language to **Luxembourgish**, you wil
 - [llm_agent](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/main/besser/agent/test/examples/llm_agent.py): Introducing [Large Language Models (LLMs)](https://besser-agentic-framework.readthedocs.io/latest/wiki/nlp/llm.html)
 - [rag_agent](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/main/besser/agent/test/examples/rag_agent.py): Introducing [Retrieval Augmented Generation (RAG)](https://besser-agentic-framework.readthedocs.io/latest/wiki/nlp/rag.html)
 - [telegram_agent](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/main/besser/agent/test/examples/telegram_agent.py): Introducing the [TelegramPlatform](https://besser-agentic-framework.readthedocs.io/latest/wiki/platforms/telegram_platform.html)
+- [github_agent](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/main/besser/agent/test/examples/github_agent.py): Introducing [GitHubPlatform](https://besser-agentic-framework.readthedocs.io/latest/wiki/platforms/github_platform.html)
+- [gitlab_agent](https://github.com/BESSER-PEARL/BESSER-Agentic-Framework/blob/main/besser/agent/test/examples/gitlab_agent.py): Introducing the [GitLabPlatform](https://besser-agentic-framework.readthedocs.io/latest/wiki/platforms/gitlab_platform.html)
 
 For more example agents, check out the [BAF-agent-examples](https://github.com/BESSER-PEARL/BAF-agent-examples) repository!

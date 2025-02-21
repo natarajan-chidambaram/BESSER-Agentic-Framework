@@ -21,12 +21,12 @@ try:
     from keras.src.optimizers import Adam
     from keras.src.utils import pad_sequences
 except ImportError:
-    logger.warning("keras dependencies in SimpleIntentClassifier could not be imported. You can install them from the "
+    logger.warning("keras dependencies in SimpleIntentClassifierTF could not be imported. You can install them from the "
                    "requirements/requirements-tensorflow.txt file")
 
 
-class SimpleIntentClassifier(IntentClassifier):
-    """A Simple Intent Classifier.
+class SimpleIntentClassifierTF(IntentClassifier):
+    """A Simple TensorFlow-based Intent Classifier.
 
     It works using a simple Keras Neural Network (the prediction model) for text classification.
 
@@ -50,19 +50,6 @@ class SimpleIntentClassifier(IntentClassifier):
             state: 'State'
     ):
         super().__init__(nlp_engine, state)
-        self._tokenizer = TextVectorization(
-            max_tokens=self._state.ic_config.num_words,
-            standardize='lower_and_strip_punctuation',
-            output_sequence_length=self._state.ic_config.input_max_num_tokens
-        )
-        self._model: Sequential = Sequential([
-            Embedding(input_dim=self._state.ic_config.num_words,
-                      output_dim=self._state.ic_config.embedding_dim),
-            GlobalAveragePooling1D(),
-            Dense(24, activation=self._state.ic_config.activation_hidden_layers),
-            Dense(24, activation=self._state.ic_config.activation_hidden_layers),
-            Dense(len(self._state.intents), activation=self._state.ic_config.activation_last_layer)
-        ])
         self.__total_training_sentences: list[str] = []
         """All the processed training sentences of all intents of the intent classifier's state."""
 
@@ -75,7 +62,6 @@ class SimpleIntentClassifier(IntentClassifier):
         self.__intent_label_mapping: dict[int, Intent] = {}
         """A mapping of the intent labels and their corresponding intents."""
 
-    def train(self) -> None:
         for intent in self._state.intents:
             intent.process_training_sentences(self._nlp_engine)
             index_intent = self._state.intents.index(intent)
@@ -87,10 +73,26 @@ class SimpleIntentClassifier(IntentClassifier):
             )
             self.__intent_label_mapping[index_intent] = intent
 
+        self._tokenizer = TextVectorization(
+            max_tokens=None,
+            standardize='lower_and_strip_punctuation',
+            output_sequence_length=self._state.ic_config.input_max_num_tokens
+        )
         self._tokenizer.adapt(self.__total_training_sentences)
         self.__total_training_sequences = self._tokenizer(
             self.__total_training_sentences,
         )
+
+        self._model: Sequential = Sequential([
+            Embedding(input_dim=self._tokenizer.vocabulary_size(),
+                      output_dim=self._state.ic_config.embedding_dim),
+            GlobalAveragePooling1D(),
+            Dense(units=self._state.ic_config.hidden_dim, activation='tanh'),
+            Dense(units=self._state.ic_config.hidden_dim, activation='tanh'),
+            Dense(len(self._state.intents), activation=self._state.ic_config.activation_last_layer)
+        ])
+
+    def train(self) -> None:
         self._model.compile(
             loss=SparseCategoricalCrossentropy(),
             optimizer=Adam(learning_rate=self._state.ic_config.lr),

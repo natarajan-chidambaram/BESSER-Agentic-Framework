@@ -6,6 +6,7 @@ BESSER Agentic Framework
    :hidden:
 
    your_first_agent
+   your_first_multiagent
    wiki
    examples
    release_notes
@@ -36,10 +37,10 @@ This command will install the base package with the core dependencies, but will 
 
 You can add the following tags to the installation:
 
-- ``extras``: It will install the necessary dependencies for some additional agent functionalities (e.g., :doc:`RAG <wiki/nlp/rag>`, :doc:`wiki/nlp/speech2text`, plotly, opencv).
+- ``extras``: It will install the necessary dependencies for some additional agent functionalities (e.g., RAG, Speech-to-Text, plotly, opencv).
 - ``llms``: Necessary dependencies to run LLMs (openai, replicate, transformers)
-- ``tensorflow``: Necessary for the :any:`simple-intent-classifier`. Since tensorflow is a very heavy package, this allows to install it only if necessary
-- ``torch``: To install PyTorch (necessary for some HuggingFace models)
+- ``torch``: To install PyTorch, necessary for the Simple Intent Classifier (PyTorch implementation) and HuggingFace models
+- ``tensorflow``: Necessary for the Simple Intent Classifier (Tensorflow implementation) and some HuggingFace models. Since tensorflow is a very heavy package, this allows to install it only if necessary
 - ``docs``: Dependencies to compile the project documentation (the one you are reading now)
 - ``all``: **It installs all the dependencies at once**
 
@@ -78,3 +79,5 @@ Example agents
 - :doc:`examples/llm_agent`: Introducing :doc:`Large Language Models (LLMs) <wiki/nlp/llm>`
 - :doc:`examples/rag_agent`: Introducing :doc:`Retrieval Augmented Generation (RAG) <wiki/nlp/rag>`
 - :doc:`examples/telegram_agent`: Introducing the :doc:`wiki/platforms/telegram_platform`
+- :doc:`examples/github_agent`: Introducing the :doc:`wiki/platforms/github_platform`
+- :doc:`examples/gitlab_agent`: Introducing the :doc:`wiki/platforms/gitlab_platform`

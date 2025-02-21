@@ -14,7 +14,8 @@ from besser.agent.nlp.intent_classifier.intent_classifier_configuration import L
 from besser.agent.nlp.intent_classifier.intent_classifier_prediction import IntentClassifierPrediction, \
     fallback_intent_prediction
 from besser.agent.nlp.intent_classifier.llm_intent_classifier import LLMIntentClassifier
-from besser.agent.nlp.intent_classifier.simple_intent_classifier import SimpleIntentClassifier
+from besser.agent.nlp.intent_classifier.simple_intent_classifier_pytorch import SimpleIntentClassifierTorch
+from besser.agent.nlp.intent_classifier.simple_intent_classifier_tensorflow import SimpleIntentClassifierTF
 from besser.agent.nlp.llm.llm import LLM
 from besser.agent.nlp.ner.ner import NER
 from besser.agent.nlp.ner.simple_ner import SimpleNER
@@ -72,7 +73,10 @@ class NLPEngine:
         for state in self._agent.states:
             if state not in self._intent_classifiers and state.intents:
                 if isinstance(state.ic_config, SimpleIntentClassifierConfiguration):
-                    self._intent_classifiers[state] = SimpleIntentClassifier(self, state)
+                    if state.ic_config.framework == 'pytorch':
+                        self._intent_classifiers[state] = SimpleIntentClassifierTorch(self, state)
+                    elif state.ic_config.framework == 'tensorflow':
+                        self._intent_classifiers[state] = SimpleIntentClassifierTF(self, state)
                 elif isinstance(state.ic_config, LLMIntentClassifierConfiguration):
                     self._intent_classifiers[state] = LLMIntentClassifier(self, state)
         # TODO: Only instantiate the NER if asked (maybe an agent does not need NER), via agent properties

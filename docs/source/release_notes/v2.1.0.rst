@@ -1,0 +1,12 @@
+Version 2.1.0
+=============
+
+New Features
+------------
+
+- Added SimpleIntentClassifierTorch and SimpleIntentClassifierTF
+- Added GitHub and GitLab platforms:
+    - Trigger transition based on webhook events
+    - Access event data to act accordingly
+    - Open, get, comment, label or assign someone to an issue
+    - Added full gidgethub and gidgetlab wrappers in the platforms
