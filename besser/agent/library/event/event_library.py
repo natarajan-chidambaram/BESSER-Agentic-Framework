@@ -8,6 +8,8 @@ value, trigger the transitions.
 from typing import Any, Callable, TYPE_CHECKING
 
 from besser.agent.core.intent.intent import Intent
+from besser.agent.platforms.github.github_webhooks_events import GitHubEvent
+from besser.agent.platforms.gitlab.gitlab_webhooks_events import GitLabEvent
 
 if TYPE_CHECKING:
     from besser.agent.core.session import Session
@@ -40,6 +42,40 @@ def intent_matched(session: 'Session', event_params: dict) -> bool:
         target_intent: Intent = event_params['intent']
         matched_intent: Intent = session.predicted_intent.intent
         return target_intent.name == matched_intent.name
+
+
+def github_event_matched(session: 'Session', event_params: dict) -> bool:
+    """This event checks if the first event of the session is the expected event
+
+    Args:
+        session (Session): the current user session
+        event_params (dict): the event parameters
+
+    Returns:
+        bool: True if the 2 event are the same, false otherwise
+    """
+    if session.flags['event']:
+        target_event: GitHubEvent = event_params['event']
+        received_event: GitHubEvent = session.events.pop()
+        session.events.append(received_event)
+        return target_event.name == received_event.name and target_event.action == received_event.action
+
+
+def gitlab_event_matched(session: 'Session', event_params: dict) -> bool:
+    """This event checks if the first event of the session is the expected event
+
+    Args:
+        session (Session): the current user session
+        event_params (dict): the event parameters
+
+    Returns:
+        bool: True if the 2 event are the same, false otherwise
+    """
+    if session.flags['event']:
+        target_event: GitLabEvent = event_params['event']
+        received_event: GitLabEvent = session.events.pop()
+        session.events.append(received_event)
+        return target_event.name == received_event.name and target_event.action == received_event.action
 
 
 def variable_matches_operation(session: 'Session', event_params: dict) -> bool:
