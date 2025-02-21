@@ -41,7 +41,7 @@ agent.set_global_fallback_body(global_fallback_body)
 
 
 def init_body(session: Session):
-    payload = github_platform.getitem(f'/repos/mgv99/4enRaya_Haskell')
+    payload = github_platform.getitem(f'/repos/USER/REPO')
     session.set('star_count', payload['stargazers_count'])
 
 

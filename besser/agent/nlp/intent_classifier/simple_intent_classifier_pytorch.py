@@ -11,7 +11,6 @@ from besser.agent.nlp.intent_classifier.intent_classifier_prediction import Inte
 from besser.agent.nlp.ner.ner_prediction import NERPrediction
 from besser.agent.nlp.preprocessing.text_preprocessing import process_text, tokenize
 
-from nltk.tokenize import word_tokenize
 from collections import Counter
 
 if TYPE_CHECKING:

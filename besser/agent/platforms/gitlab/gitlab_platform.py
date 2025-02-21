@@ -1,24 +1,19 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import threading
-from asyncio import AbstractEventLoop
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from aiohttp import web
-from gidgetlab import routing, sansio
+from gidgetlab import sansio
 
-from besser.agent.core.message import Message, MessageType
 from besser.agent.core.session import Session
-from besser.agent.exceptions.exceptions import PlatformMismatchError
 from besser.agent.exceptions.logger import logger
 from besser.agent.platforms import gitlab
 from besser.agent.platforms.gitlab.gitlab_actions import *
 from besser.agent.platforms.gitlab.gitlab_objects import Issue
 from besser.agent.platforms.gitlab.gitlab_webhooks_events import GitLabEvent
-from besser.agent.platforms.payload import Payload, PayloadAction, PayloadEncoder
+from besser.agent.platforms.payload import Payload
 from besser.agent.platforms.platform import Platform
 
 if TYPE_CHECKING:

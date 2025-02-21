@@ -56,9 +56,12 @@ The following example wait for issues to open to add a thanking message as comme
 
 .. code:: python
 
+    # How to import the Issue class
+    from besser.agent.platforms.github.github_objects import Issue
+
     def issue_body(session: Session):
-        # Access through the Session to the IssuesOpened GithubEvent that triggered the transition
-        event: GithubEvent = session.event
+        # Access through the Session to the IssuesOpened GitHubEvent that triggered the transition
+        event: GitHubEvent = session.event
         # Wrap the issue object of the payload in our abstraction
         issue = Issue(event.payload['issue'])
         # Add a thanking message to the opened issue
@@ -70,16 +73,16 @@ The following example wait for issues to open to add a thanking message as comme
 
 
 Gidgethub Wrapper
-----------------
+-----------------
 
 The BAF GitHub Platform wraps some functionalities of the gidgethub library (such as handling webhooks or
 act on issues), but not all of them.
 
 In order to use other features not included in BAF yet, we included a `__getattr__` function in the GitHubPlatform
 class. It forwards the method calls not implemented in GitHubPlatform to the underlying GitHubAPI
-(`GitHubAPI <https://gidgethub.readthedocs.io/en/latest/aiohttp.html#gidgethub.aiohttp.GitHubAPI>`_
+(`gidgethub.aiohttp.GitHubAPI <https://gidgethub.readthedocs.io/en/latest/aiohttp.html#gidgethub.aiohttp.GitHubAPI>`_
 class, which is an extension of the abstract
-`GitHubAPI <https://gidgethub.readthedocs.io/en/latest/abc.html#gidgethub.abc.GitHubAPI>`_ class).
+`gidgethub.abc.GitHubAPI <https://gidgethub.readthedocs.io/en/latest/abc.html#gidgethub.abc.GitHubAPI>`_ class).
 
 **That means you can call any function from the GitHubPlatform as you would do in the GitHubAPI!**
 
@@ -98,10 +101,9 @@ API References
 --------------
 
 - Agent: :class:`besser.agent.core.agent.Agent`
-- Agent.get_or_create_session(): :meth:`besser.agent.core.agent.Agent.get_or_create_session`
 - Agent.use_github_platform(): :meth:`besser.agent.core.agent.Agent.use_github_platform`
 - GitHubPlatform: :class:`besser.agent.platforms.github.github_platform.GitHubPlatform`
-- GithubEvent: :meth:`besser.agent.platforms.github.webhooks_events.GithubEvent`
+- GitHubEvent: :meth:`besser.agent.platforms.github.github_webhooks_events.GitHubEvent`
 - Issue: :meth:`besser.agent.platforms.github.github_objects.Issue`
 - User: :meth:`besser.agent.platforms.github.github_objects.User`
 - GitHubPlatform.comment_issue(): :meth:`besser.agent.platforms.github.github_platform.GitHubPlatform.comment_issue`

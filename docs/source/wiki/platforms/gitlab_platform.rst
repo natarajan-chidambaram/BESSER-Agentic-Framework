@@ -31,6 +31,9 @@ After that, you can use the different events sent by GitLab to trigger transitio
 
 .. code:: python
 
+    # Importing the events
+    from besser.agent.platforms.gitlab.gitlab_webhooks_events import MergeRequestOpened, IssuesOpened, WikiPageCreated, Push
+
     # Merge Request
     idle.when_event_go_to(gitlab_event_matched, merge_state, {'event':MergeRequestOpened()})
     # Issues
@@ -58,9 +61,12 @@ The following example wait for issues opening events to add a thanking message a
 
 .. code:: python
 
+    # How to import the Issue class
+    from besser.agent.platforms.gitlab.gitlab_objects import Issue
+
     def issue_body(session: Session):
-        # Access through the Session to the IssuesOpened GitlabEvent that triggered the transition
-        event: GitlabEvent = session.event
+        # Access through the Session to the IssuesOpened GitLabEvent that triggered the transition
+        event: GitLabEvent = session.event
         # Extract useful information
         user_repo = event.payload['project']['path_with_namespace'].split('/')
         issue_iid = event.payload['object_attributes']['iid']
@@ -78,16 +84,16 @@ The following example wait for issues opening events to add a thanking message a
 
 
 Gitgetlab Wrapper
-----------------
+-----------------
 
 The BAF GitLab Platform wraps some functionalities of the gidgetlab library (such as handling webhooks or
 act on issues), but not all of them.
 
 In order to use other features not included in BAF yet, we included a `__getattr__` function in the GitLabPlatform
 class. It forwards the method calls not implemented in GitLabPlatform to the underlying GitLabAPI
-(`GitLabAPI <https://gidgetlab.readthedocs.io/en/latest/aiohttp.html#gidgetlab.aiohttp.GitLabAPI>`_
+(`gidgetlab.aiohttp.GitLabAPI <https://gidgetlab.readthedocs.io/en/latest/aiohttp.html#gidgetlab.aiohttp.GitLabAPI>`_
 class, which is an extension of the abstract
-`GitLabAPI <https://gidgetlab.readthedocs.io/en/latest/abc.html#gidgetlab.abc.GitLabAPI>`_ class).
+`gidgetlab.abc.GitLabAPI <https://gidgetlab.readthedocs.io/en/latest/abc.html#gidgetlab.abc.GitLabAPI>`_ class).
 
 **That means you can call any function from the GitLabPlatform as you would do in the GitLabAPI!**
 
@@ -111,9 +117,9 @@ API References
 --------------
 
 - Agent: :class:`besser.agent.core.agent.Agent`
-- Agent.get_or_create_session(): :meth:`besser.agent.core.agent.Agent.get_or_create_session`
 - Agent.use_gitlab_platform(): :meth:`besser.agent.core.agent.Agent.use_gitlab_platform`
 - GitLabPlatform: :class:`besser.agent.platforms.gitlab.gitlab_platform.GitLabPlatform`
-- GitlabEvent: :meth:`besser.agent.platforms.gitlab.webhooks_events.GitlabEvent`
+- GitLabEvent: :meth:`besser.agent.platforms.gitlab.gitlab_webhooks_events.GitLabEvent`
 - GitLabPlatform.comment_issue(): :meth:`besser.agent.platforms.gitlab.gitlab_platform.GitLabPlatform.comment_issue`
+- Issue: :meth:`besser.agent.platforms.gitlab.gitlab_objects.Issue`
 
