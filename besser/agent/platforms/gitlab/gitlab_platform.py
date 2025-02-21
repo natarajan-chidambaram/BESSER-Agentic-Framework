@@ -7,18 +7,17 @@ from asyncio import AbstractEventLoop
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from aiohttp import web, ClientSession
+from aiohttp import web
 from gidgetlab import routing, sansio
-from gidgetlab.aiohttp import GitLabAPI
 
 from besser.agent.core.message import Message, MessageType
 from besser.agent.core.session import Session
 from besser.agent.exceptions.exceptions import PlatformMismatchError
 from besser.agent.exceptions.logger import logger
 from besser.agent.platforms import gitlab
-from besser.agent.platforms.gitlab.actions import *
+from besser.agent.platforms.gitlab.gitlab_actions import *
 from besser.agent.platforms.gitlab.gitlab_objects import Issue
-from besser.agent.platforms.gitlab.webooks_events import GitlabEvent
+from besser.agent.platforms.gitlab.gitlab_webhooks_events import GitLabEvent
 from besser.agent.platforms.payload import Payload, PayloadAction, PayloadEncoder
 from besser.agent.platforms.platform import Platform
 
@@ -52,7 +51,6 @@ class GitLabPlatform(Platform):
         _agent (Agent): The agent the platform belongs to
         _secret (str): The secret webhook token
         _oauth_token (str): Personal token for GitLab API requests
-        _agent_name (str): Name of the agent
         _port (int): Port of the webhook endpoint
         _app (web.Application): Web application routing webhooks to our entrypoint
         _session (Session): The session of the GitLabPlatform
@@ -64,24 +62,21 @@ class GitLabPlatform(Platform):
         self._agent: 'Agent' = agent
         self._secret: str = self._agent.get_property(gitlab.GITLAB_WEBHOOK_TOKEN)
         self._oauth_token: str = self._agent.get_property(gitlab.GITLAB_PERSONAL_TOKEN)
-        self._agent_name: str = self._agent.name
-        self._port: int = self._agent.get_property(gitlab.GITLAB_PORT)
-        self._event_loop: AbstractEventLoop = None
-        self._router = routing.Router()
+        self._port: int = self._agent.get_property(gitlab.GITLAB_WEBHOOK_PORT)
         self._app = web.Application()
         self._session: Session = None
 
-        async def post_entrypoint(request) -> None:
+        async def post_entrypoint(request) -> web.Response:
             body = await request.read()
 
             event = sansio.Event.from_http(request.headers, body, secret=self._secret)
             if event.event == "Note Hook":
                 agent.receive_event(
-                    GitlabEvent(event.data['object_attributes']['noteable_type'] + event.event,
+                    GitLabEvent(event.data['object_attributes']['noteable_type'] + event.event,
                                 event.data['object_attributes']['action'] or '', event.data))
             else:
                 agent.receive_event(
-                    GitlabEvent(event.event, event.data['object_attributes']['action'] or '', event.data))
+                    GitLabEvent(event.event, event.data['object_attributes']['action'] or '', event.data))
             return web.Response(status=200)
 
         self._post_entrypoint = post_entrypoint
@@ -90,9 +85,6 @@ class GitLabPlatform(Platform):
         self._app.router.add_post("/", self._post_entrypoint)
         if self._port is not None:
             self._port = int(self._port)
-
-        self._event_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self._event_loop)
 
     def start(self) -> None:
         logger.info(f'{self._agent.name}\'s GitLabPlatform starting')
@@ -113,7 +105,7 @@ class GitLabPlatform(Platform):
 
         async def api_call(*args, **kwargs):
             async with ClientSession() as session:
-                gl_api = GitLabAPI(session, self._agent_name, access_token=self._oauth_token)
+                gl_api = GitLabAPI(session, self._agent.name, access_token=self._oauth_token)
                 # Forward the method call to the gitlab api
                 method = getattr(gl_api, name, None)
                 if method:
@@ -127,31 +119,22 @@ class GitLabPlatform(Platform):
         return method_proxy
 
     def _send(self, session_id, payload: Payload) -> None:
-        session = self._agent.get_or_create_session(session_id=session_id, platform=self)
-        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
-        if session_id in self._connections:
-            conn = self._connections[session_id]
-            conn.send(json.dumps(payload, cls=PayloadEncoder))
+        logger.warning(f'_send() method not implemented in {self.__class__.__name__}')
 
     def reply(self, session: Session, message: str) -> None:
-        if session.platform is not self:
-            raise PlatformMismatchError(self, session)
-        session.save_message(Message(t=MessageType.STR, content=message, is_user=False, timestamp=datetime.now()))
-        payload = Payload(action=PayloadAction.AGENT_REPLY_STR,
-                          message=message)
-        self._send(session.id, payload)
+        logger.warning(f'reply() method not implemented in {self.__class__.__name__}')
 
     def open_issue(self, user: str, repository: str, title: str, body: str) -> Issue:
-        return Issue(sync_coro_call(open_issue(self._agent_name, self._oauth_token, user, repository, title, body)))
+        return Issue(sync_coro_call(open_issue(self._agent.name, self._oauth_token, user, repository, title, body)))
 
     def get_issue(self, user: str, repository: str, issue_number: int) -> Issue:
-        return Issue(sync_coro_call(get_issue(self._agent_name, self._oauth_token, user, repository, issue_number)))
+        return Issue(sync_coro_call(get_issue(self._agent.name, self._oauth_token, user, repository, issue_number)))
 
     def comment_issue(self, issue: Issue, content: str):
-        return sync_coro_call(comment_issue(self._agent_name, self._oauth_token, issue, content))
+        return sync_coro_call(comment_issue(self._agent.name, self._oauth_token, issue, content))
 
     def set_label(self, issue: Issue, label: str):
-        return sync_coro_call(set_label(self._agent_name, self._oauth_token, issue, label))
+        return sync_coro_call(set_label(self._agent.name, self._oauth_token, issue, label))
 
     def assign_user(self, issue: Issue, assignee: int):
-        return sync_coro_call(assign_user(self._agent_name, self._oauth_token, issue, assignee))
+        return sync_coro_call(assign_user(self._agent.name, self._oauth_token, issue, assignee))

@@ -13,10 +13,12 @@ async def open_issue(name: str, token: str, user: str, repository: str, title: s
                                     'description': body,
                                 })
 
+
 async def get_issue(name: str, token: str, user: str, repository: str, issue_number: int):
     async with ClientSession() as session:
         gl_api = GitLabAPI(session, name, access_token=token)
         return await gl_api.getitem(f'/projects/{user}%2F{repository}/issues/{issue_number}')
+
 
 async def comment_issue(name: str, token: str, issue: Issue, content: str):
     async with ClientSession() as session:
@@ -26,6 +28,7 @@ async def comment_issue(name: str, token: str, issue: Issue, content: str):
                                 'body': content,
                             })
 
+
 async def set_label(name: str, token: str, issue: Issue, label: str):
     issue.labels.append({'name': label})
     async with ClientSession() as session:
@@ -34,6 +37,7 @@ async def set_label(name: str, token: str, issue: Issue, label: str):
                            data={
                                'add_labels': [label]
                            })
+
 
 async def assign_user(name: str, token: str, issue: Issue, assignee_id: int):
     assignee_ids = list(map(lambda u: u.id, issue.assignees))

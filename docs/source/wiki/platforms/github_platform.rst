@@ -1,5 +1,5 @@
 GitHub platform
-=================
+===============
 
 The GitHub Platform allows an agent to receive events from
 `GitHub's webhooks <https://docs.github.com/en/webhooks/using-webhooks/creating-webhooks>`_

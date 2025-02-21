@@ -1,4 +1,4 @@
-class GitlabEvent:
+class GitLabEvent:
 
     def __init__(self, name, action, payload):
         self._name: str = name
@@ -21,86 +21,106 @@ class GitlabEvent:
         return self._payload
 
 
-class IssuesClosed(GitlabEvent):
+class IssuesClosed(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Issue Hook', 'close', payload)
 
-class IssuesUpdated(GitlabEvent):
+
+class IssuesUpdated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Issue Hook', 'update', payload)
 
-class IssuesOpened(GitlabEvent):
+
+class IssuesOpened(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Issue Hook', 'open', payload)
 
-class IssuesReopened(GitlabEvent):
+
+class IssuesReopened(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Issue Hook', 'reopen', payload)
 
-class IssueCommentCreated(GitlabEvent):
+
+class IssueCommentCreated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('IssueNote Hook', 'create', payload)
 
-class IssueCommentUpdated(GitlabEvent):
+
+class IssueCommentUpdated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('IssueNote Hook', 'update', payload)
 
-class MergeRequestClosed(GitlabEvent):
+
+class MergeRequestClosed(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'close', payload)
 
-class MergeRequestUpdated(GitlabEvent):
+
+class MergeRequestUpdated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'update', payload)
 
-class MergeRequestOpened(GitlabEvent):
+
+class MergeRequestOpened(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'open', payload)
 
-class MergeRequestReopened(GitlabEvent):
+
+class MergeRequestReopened(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'reopen', payload)
 
-class MergeRequestApproved(GitlabEvent):
+
+class MergeRequestApproved(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'approved', payload)
 
-class MergeRequestUnapproved(GitlabEvent):
+
+class MergeRequestUnapproved(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'unapproved', payload)
 
-class MergeRequestApproval(GitlabEvent):
+
+class MergeRequestApproval(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'approval', payload)
 
-class MergeRequestUnapproval(GitlabEvent):
+
+class MergeRequestUnapproval(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'unapproval', payload)
 
-class MergeRequestMerge(GitlabEvent):
+
+class MergeRequestMerge(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Merge Request Hook', 'merge', payload)
 
-class MergeRequestCommentCreated(GitlabEvent):
+
+class MergeRequestCommentCreated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('MergeRequestNote Hook', 'create', payload)
 
-class MergeRequestCommentUpdated(GitlabEvent):
+
+class MergeRequestCommentUpdated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('MergeRequestNote Hook', 'update', payload)
 
-class WikiPageCreated(GitlabEvent):
+
+class WikiPageCreated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Wiki Page Hook', 'create', payload)
 
-class WikiPageUpdated(GitlabEvent):
+
+class WikiPageUpdated(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Wiki Page Hook', 'update', payload)
 
-class WikiPageDeleted(GitlabEvent):
+
+class WikiPageDeleted(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Wiki Page Hook', 'delete', payload)
 
-class Push(GitlabEvent):
+
+class Push(GitLabEvent):
     def __init__(self, payload=None):
         super().__init__('Push Hook', '', payload)

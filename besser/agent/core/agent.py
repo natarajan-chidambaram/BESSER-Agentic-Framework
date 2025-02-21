@@ -39,7 +39,7 @@ class Agent:
         _name (str): The agent name
         _platforms (list[Platform]): The agent platforms
         _platforms_threads (list[threading.Thread]): The threads where the platforms are run
-        _event_loop (asyncio.EventLoop): The event loop managing external events
+        _event_loop (asyncio.AbstractEventLoop): The event loop managing external events
         _event_thread (threading.Thread): The thread where the event loop is run
         _nlp_engine (NLPEngine): The agent NLP engine
         _config (ConfigParser): The agent configuration parameters
@@ -62,7 +62,7 @@ class Agent:
         self._name: str = name
         self._platforms: list[Platform] = []
         self._platforms_threads: list[threading.Thread] = []
-        self._event_loop: asyncio.EventLoop or None = None
+        self._event_loop: asyncio.AbstractEventLoop or None = None
         self._event_thread: threading.Thread or None = None
         self._nlp_engine = NLPEngine(self)
         self._config: ConfigParser = ConfigParser()
@@ -275,7 +275,8 @@ class Agent:
             for global_state_tuple in self.global_initial_states:
                 global_state = global_state_tuple[0]
                 for state in self.states:
-                    if (not any(state.name is global_init_state[0].name for global_init_state in self.global_initial_states)
+                    if (not any(
+                            state.name is global_init_state[0].name for global_init_state in self.global_initial_states)
                             and state not in global_state_follow_up):
                         if state.transitions and not state.transitions[0].is_auto():
                             state.when_intent_matched_go_to(global_state_tuple[1], global_state)
@@ -305,7 +306,7 @@ class Agent:
                 if session.events and len(session.events) != 0:
                     session.flags['event'] = True
                     session.current_state.receive_event(session)
-            loop.call_later(1,manage_events, loop)
+            loop.call_later(1, manage_events, loop)
 
         def start_event_loop():
             logger.debug('Starting Event Loop')
@@ -313,9 +314,6 @@ class Agent:
             asyncio.get_event_loop().call_soon(manage_events, self._event_loop)
             self._event_loop.run_forever()
             logger.debug('Event Loop stopped')
-
-
-
 
         thread = threading.Thread(target=start_event_loop)
         self._event_thread = thread
@@ -420,8 +418,7 @@ class Agent:
         session.file = file
         logger.info('Received file')
         session.current_state.receive_file(session)
-        
-        
+
     def receive_event(self, event: Any) -> None:
         """Receive an external event from a platform.
 
@@ -430,7 +427,7 @@ class Agent:
         Args:
             event (Any): the received event
         """
-        logger.info(f'Received event: {event}')
+        logger.info(f'Received event: {event.name}')
         for session in self._sessions.values():
             session.events.appendleft(event)
 
@@ -561,7 +558,7 @@ class Agent:
         telegram_platform = TelegramPlatform(self)
         self._platforms.append(telegram_platform)
         return telegram_platform
-    
+
     def use_github_platform(self) -> GitHubPlatform:
         """Use the :class:`~besser.agent.platforms.github.github_platform.GitHubPlatform` on this agent.
 
@@ -599,7 +596,8 @@ class Agent:
             session (Session): the session of the current user
         """
         if self.get_property(DB_MONITORING) and self._monitoring_db.connected:
-            thread = threading.Thread(target=self._monitoring_db.insert_intent_prediction, args=(session, session.current_state,))
+            thread = threading.Thread(target=self._monitoring_db.insert_intent_prediction,
+                                      args=(session, session.current_state,))
             thread.start()
 
     def _monitoring_db_insert_transition(self, session: Session, transition: Transition) -> None:

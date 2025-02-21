@@ -175,6 +175,7 @@ class State:
             dest (State): the destination state
             event_params (dict): the parameters associated to the event
         """
+        # TODO: Standardize events
         # event_signature = inspect.signature(event)
         # event_template_signature = inspect.signature(event_template)
         # if event_signature.parameters != event_template_signature.parameters:
@@ -363,6 +364,7 @@ class State:
         Args:
             session (Session): the user session that received the event
         """
+        # TODO: Decide policy to remove events
         fallback_deque = deque()
         while session.events:
             for transition in self.transitions:

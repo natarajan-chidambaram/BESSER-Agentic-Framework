@@ -4,13 +4,12 @@
 
 import logging
 
-
 from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
 from besser.agent.exceptions.logger import logger
 from besser.agent.library.event.event_library import gitlab_event_matched
 from besser.agent.platforms.gitlab.gitlab_objects import Issue
-from besser.agent.platforms.gitlab.webooks_events import IssuesOpened, GitlabEvent, IssueCommentCreated, IssuesUpdated
+from besser.agent.platforms.gitlab.gitlab_webhooks_events import IssuesOpened, GitLabEvent, IssueCommentCreated, IssuesUpdated
 
 # Configure the logging module (optional)
 logger.setLevel(logging.INFO)
@@ -21,11 +20,11 @@ agent.load_properties('config.ini')
 # Define the platform your agent will use
 gitlab_platform = agent.use_gitlab_platform()
 
-
 # STATES
 
 idle = agent.new_state('idle', initial=True)
 issue_state = agent.new_state('issue_opened')
+
 
 # STATES BODIES' DEFINITION + TRANSITIONS
 
@@ -43,14 +42,14 @@ def idle_body(session: Session):
 
 
 idle.set_body(idle_body)
-idle.when_event_go_to(gitlab_event_matched,   issue_state, {'event':IssuesOpened()})
-# The following transitions allows to flush the events created by the actions of the agent
-idle.when_event_go_to(gitlab_event_matched,   idle       , {'event':IssuesUpdated()})
-idle.when_event_go_to(gitlab_event_matched,   idle       , {'event':IssueCommentCreated()})
+# The following transitions allow to flush the events created by the actions of the agent
+idle.when_event_go_to(gitlab_event_matched, issue_state, {'event': IssuesOpened()})
+idle.when_event_go_to(gitlab_event_matched, idle, {'event': IssuesUpdated()})
+idle.when_event_go_to(gitlab_event_matched, idle, {'event': IssueCommentCreated()})
 
 
 def issue_body(session: Session):
-    event: GitlabEvent = session.event
+    event: GitLabEvent = session.event
     user_repo = event.payload['project']['path_with_namespace'].split('/')
     issue_iid = event.payload['object_attributes']['iid']
     issue: Issue = gitlab_platform.get_issue(
@@ -63,8 +62,6 @@ def issue_body(session: Session):
 
 issue_state.set_body(issue_body)
 issue_state.go_to(idle)
-
-
 
 # RUN APPLICATION
 

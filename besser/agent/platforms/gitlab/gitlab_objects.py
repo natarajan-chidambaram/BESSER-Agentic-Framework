@@ -27,6 +27,7 @@ class User:
         """str: The user groups url."""
         return self._groups_url
 
+
 class Issue:
     def __init__(self, api_payload):
         self._id: int = api_payload['id']

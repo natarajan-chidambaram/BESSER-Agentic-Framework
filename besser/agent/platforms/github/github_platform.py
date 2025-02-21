@@ -4,17 +4,16 @@ import asyncio
 import threading
 from typing import TYPE_CHECKING
 
-from aiohttp import web, ClientSession
+from aiohttp import web
 from aiohttp.web_request import Request
 from gidgethub import sansio
-from gidgethub.aiohttp import GitHubAPI
 
 from besser.agent.core.session import Session
 from besser.agent.exceptions.logger import logger
 from besser.agent.platforms import github
-from besser.agent.platforms.github.actions import *
+from besser.agent.platforms.github.github_actions import *
 from besser.agent.platforms.github.github_objects import Issue
-from besser.agent.platforms.github.webooks_events import GithubEvent
+from besser.agent.platforms.github.github_webhooks_events import GitHubEvent
 from besser.agent.platforms.payload import Payload
 from besser.agent.platforms.platform import Platform
 
@@ -33,6 +32,7 @@ def sync_coro_call(coro):
     thread.join()
     return returnee['result']
 
+
 class GitHubPlatform(Platform):
     """The GitHub Platform allows an agent to receive events from GitHub webhooks and make calls to its REST API
 
@@ -46,7 +46,6 @@ class GitHubPlatform(Platform):
         _agent (Agent): The agent the platform belongs to
         _secret (str): The secret webhook token
         _oauth_token (str): Personal token for GitHub API requests
-        _agent_name (str): Name of the agent
         _port (int): Port of the webhook endpoint
         _app (web.Application): Web application routing webhooks to our entrypoint
         _session (Session): The session of the GitHubPlatform
@@ -57,9 +56,8 @@ class GitHubPlatform(Platform):
         super().__init__()
         self._agent: 'Agent' = agent
         self._secret: str = self._agent.get_property(github.GITHUB_WEBHOOK_TOKEN)
-        self._oauth_token: str  = self._agent.get_property(github.GITHUB_PERSONAL_TOKEN)
-        self._agent_name: str  = self._agent.name
-        self._port: int  = self._agent.get_property(github.GITHUB_PORT)
+        self._oauth_token: str = self._agent.get_property(github.GITHUB_PERSONAL_TOKEN)
+        self._port: int = self._agent.get_property(github.GITHUB_WEBHOOK_PORT)
         self._app: web.Application = web.Application()
         self._session: Session = None
 
@@ -70,20 +68,17 @@ class GitHubPlatform(Platform):
             if event.event == 'gollum':
                 pages = event.data['pages']
                 for page in pages:
-                    agent.receive_event(GithubEvent('gollum', page['action'], page))
+                    agent.receive_event(GitHubEvent('gollum', page['action'], page))
             else:
-                agent.receive_event(GithubEvent(event.event, event.data['action'] or '', event.data))
+                agent.receive_event(GitHubEvent(event.event, event.data['action'] or '', event.data))
             return web.Response(status=200)
 
         self._post_entrypoint = post_entrypoint
-
 
     def initialize(self) -> None:
         self._app.router.add_post("/", self._post_entrypoint)
         if self._port is not None:
             self._port = int(self._port)
-
-
 
     def start(self) -> None:
         logger.info(f'{self._agent.name}\'s GitHubPlatform starting')
@@ -94,8 +89,7 @@ class GitHubPlatform(Platform):
     def stop(self):
         self.running = False
         logger.info(f'{self._agent.name}\'s GitHubPlatform stopped')
-        
-        
+
     def __getattr__(self, name: str):
         """All methods in :class:`aiohttp.GitHubAPI` can be used from the GitHubPlatform.
 
@@ -105,8 +99,8 @@ class GitHubPlatform(Platform):
 
         async def api_call(*args, **kwargs):
             async with ClientSession() as session:
-                gh_api = GitHubAPI(session, self._agent_name, oauth_token=self._oauth_token)
-                # Forward the method call to the (telegram) bot
+                gh_api = GitHubAPI(session, self._agent.name, oauth_token=self._oauth_token)
+                # Forward the method call to the GitHubAPI
                 method = getattr(gh_api, name, None)
                 if method:
                     return await method(*args, **kwargs)
@@ -117,28 +111,24 @@ class GitHubPlatform(Platform):
             return sync_coro_call(api_call(*args, **kwargs))
 
         return method_proxy
-        
-        
 
     def _send(self, session_id, payload: Payload) -> None:
-        pass
+        logger.warning(f'_send() methdo not implemented in {self.__class__.__name__}')
 
     def reply(self, session: Session, message: str) -> None:
-        pass
-
-
+        logger.warning(f'reply() method not implemented in {self.__class__.__name__}')
 
     def open_issue(self, user: str, repository: str, title: str, body: str) -> Issue:
-        return Issue(sync_coro_call(open_issue(self._agent_name, self._oauth_token, user, repository, title, body)))
+        return Issue(sync_coro_call(open_issue(self._agent.name, self._oauth_token, user, repository, title, body)))
 
     def get_issue(self, user: str, repository: str, issue_number: int) -> Issue:
-        return Issue(sync_coro_call(get_issue(self._agent_name, self._oauth_token, user, repository, issue_number)))
+        return Issue(sync_coro_call(get_issue(self._agent.name, self._oauth_token, user, repository, issue_number)))
 
     def comment_issue(self, issue:Issue, content: str):
-        return sync_coro_call(comment_issue(self._agent_name, self._oauth_token, issue, content))
+        return sync_coro_call(comment_issue(self._agent.name, self._oauth_token, issue, content))
 
     def set_label(self, issue:Issue, label: str):
-        return sync_coro_call(set_label(self._agent_name, self._oauth_token, issue, label))
+        return sync_coro_call(set_label(self._agent.name, self._oauth_token, issue, label))
 
     def assign_user(self, issue:Issue, assignee: str):
-        return sync_coro_call(assign_user(self._agent_name, self._oauth_token, issue, assignee))
+        return sync_coro_call(assign_user(self._agent.name, self._oauth_token, issue, assignee))

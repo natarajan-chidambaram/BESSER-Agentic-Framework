@@ -1,4 +1,4 @@
-class GithubEvent:
+class GitHubEvent:
 
     def __init__(self, name, action, payload):
         self._name: str = name
@@ -20,206 +20,257 @@ class GithubEvent:
         """str: The payload of the event"""
         return self._payload
 
-class StarCreated(GithubEvent):
-    def __init__(self,payload=None):
-        super().__init__('star', 'created',payload)
 
-class StarDeleted(GithubEvent):
-    def __init__(self,payload=None):
-        super().__init__('star', 'deleted',payload)
+class StarCreated(GitHubEvent):
+    def __init__(self, payload=None):
+        super().__init__('star', 'created', payload)
 
-class IssuesAssigned(GithubEvent):
+
+class StarDeleted(GitHubEvent):
+    def __init__(self, payload=None):
+        super().__init__('star', 'deleted', payload)
+
+
+class IssuesAssigned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'assigned', payload)
 
-class IssuesClosed(GithubEvent):
+
+class IssuesClosed(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'closed', payload)
 
-class IssuesDeleted(GithubEvent):
+
+class IssuesDeleted(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'deleted', payload)
 
-class IssuesDemilestoned(GithubEvent):
+
+class IssuesDemilestoned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'demilestoned', payload)
 
-class IssuesEdited(GithubEvent):
+
+class IssuesEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'edited', payload)
 
-class IssuesLabeled(GithubEvent):
+
+class IssuesLabeled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'labeled', payload)
 
-class IssuesLocked(GithubEvent):
+
+class IssuesLocked(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'locked', payload)
 
-class IssuesMilestoned(GithubEvent):
+
+class IssuesMilestoned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'milestoned', payload)
 
-class IssuesOpened(GithubEvent):
+
+class IssuesOpened(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'opened', payload)
 
-class IssuesPinned(GithubEvent):
+
+class IssuesPinned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'pinned', payload)
 
-class IssuesReopened(GithubEvent):
+
+class IssuesReopened(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'reopened', payload)
 
-class IssuesTransferred(GithubEvent):
+
+class IssuesTransferred(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'transferred', payload)
 
-class IssuesUnassigned(GithubEvent):
+
+class IssuesUnassigned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'unassigned', payload)
 
-class IssuesUnlabeled(GithubEvent):
+
+class IssuesUnlabeled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'unlabeled', payload)
 
-class IssuesUnlocked(GithubEvent):
+
+class IssuesUnlocked(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'unlocked', payload)
 
-class IssuesUnpinned(GithubEvent):
+
+class IssuesUnpinned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issues', 'unpinned', payload)
 
-class IssueCommentCreated(GithubEvent):
+
+class IssueCommentCreated(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issue_comment', 'created', payload)
 
-class IssueCommentDeleted(GithubEvent):
+
+class IssueCommentDeleted(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issue_comment', 'deleted', payload)
 
-class IssueCommentEdited(GithubEvent):
+
+class IssueCommentEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('issue_comment', 'edited', payload)
 
-class PullRequestAssigned(GithubEvent):
+
+class PullRequestAssigned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'assigned', payload)
 
-class PullRequestAutoMergeDisabled(GithubEvent):
+
+class PullRequestAutoMergeDisabled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'auto_merge_disabled', payload)
 
-class PullRequestAutoMergeEnabled(GithubEvent):
+
+class PullRequestAutoMergeEnabled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'auto_merge_enabled', payload)
 
-class PullRequestClosed(GithubEvent):
+
+class PullRequestClosed(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'closed', payload)
 
-class PullRequestConvertedToDraft(GithubEvent):
+
+class PullRequestConvertedToDraft(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'converted_to_draft', payload)
 
-class PullRequestDemilestoned(GithubEvent):
+
+class PullRequestDemilestoned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'demilestoned', payload)
 
-class PullRequestDequeued(GithubEvent):
+
+class PullRequestDequeued(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'dequeued', payload)
 
-class PullRequestEdited(GithubEvent):
+
+class PullRequestEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'edited', payload)
 
-class PullRequestEnqueued(GithubEvent):
+
+class PullRequestEnqueued(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'enqueued', payload)
 
-class PullRequestLabeled(GithubEvent):
+
+class PullRequestLabeled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'labeled', payload)
 
-class PullRequestLocked(GithubEvent):
+
+class PullRequestLocked(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'locked', payload)
 
-class PullRequestMilestoned(GithubEvent):
+
+class PullRequestMilestoned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'milestoned', payload)
 
-class PullRequestOpened(GithubEvent):
+
+class PullRequestOpened(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'opened', payload)
 
-class PullRequestReadyForReview(GithubEvent):
+
+class PullRequestReadyForReview(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'ready_for_review', payload)
 
-class PullRequestReopened(GithubEvent):
+
+class PullRequestReopened(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'reopened', payload)
 
-class PullRequestReviewRequestRemoved(GithubEvent):
+
+class PullRequestReviewRequestRemoved(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'review_request_removed', payload)
 
-class PullRequestReviewRequested(GithubEvent):
+
+class PullRequestReviewRequested(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'review_requested', payload)
 
-class PullRequestSynchronize(GithubEvent):
+
+class PullRequestSynchronize(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'synchronize', payload)
 
-class PullRequestUnassigned(GithubEvent):
+
+class PullRequestUnassigned(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'unassigned', payload)
 
-class PullRequestUnlabeled(GithubEvent):
+
+class PullRequestUnlabeled(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'unlabeled', payload)
 
-class PullRequestUnlocked(GithubEvent):
+
+class PullRequestUnlocked(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request', 'unlocked', payload)
 
-class PullRequestReviewCommentCreated(GithubEvent):
+
+class PullRequestReviewCommentCreated(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request_review_comment', 'created', payload)
 
-class PullRequestReviewCommentDeleted(GithubEvent):
+
+class PullRequestReviewCommentDeleted(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request_review_comment', 'deleted', payload)
 
-class PullRequestReviewCommentEdited(GithubEvent):
+
+class PullRequestReviewCommentEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('pull_request_review_comment', 'edited', payload)
 
-class WikiPageCreated(GithubEvent):
+
+class WikiPageCreated(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('gollum', 'created', payload)
 
-class WikiPageEdited(GithubEvent):
+
+class WikiPageEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('gollum', 'edited', payload)
 
-class LabelCreated(GithubEvent):
+
+class LabelCreated(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('label', 'created', payload)
 
-class LabelDeleted(GithubEvent):
+
+class LabelDeleted(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('label', 'deleted', payload)
 
-class LabelEdited(GithubEvent):
+
+class LabelEdited(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('label', 'edited', payload)
 
-class Push(GithubEvent):
+
+class Push(GitHubEvent):
     def __init__(self, payload=None):
         super().__init__('push', '', payload)

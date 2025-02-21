@@ -81,7 +81,6 @@ class Session:
         self.agent_connections: dict[str, WebSocketApp] = {}
         self._events: deque[Any] = deque()
 
-
     @property
     def id(self):
         """str: The session id."""

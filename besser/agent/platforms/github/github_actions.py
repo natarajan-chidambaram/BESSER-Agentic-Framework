@@ -13,10 +13,12 @@ async def open_issue(name: str, token: str, user: str, repository: str, title: s
                                     'body': body,
                                 })
 
+
 async def get_issue(name: str, token: str, user: str, repository: str, issue_number: int):
     async with ClientSession() as session:
         gh_api = GitHubAPI(session, name, oauth_token=token)
         return await gh_api.getitem(f'/repos/{user}/{repository}/issues/{issue_number}')
+
 
 async def comment_issue(name: str, token: str, issue: Issue, content: str):
     async with ClientSession() as session:
@@ -25,6 +27,7 @@ async def comment_issue(name: str, token: str, issue: Issue, content: str):
                             data={
                                 'body': content,
                             })
+
 
 async def set_label(name: str, token: str, issue: Issue, label: str):
     labels_names = list(map(lambda l: l['name'], issue.labels))
@@ -37,6 +40,7 @@ async def set_label(name: str, token: str, issue: Issue, label: str):
                                data={
                                    'labels': labels_names
                                })
+
 
 async def assign_user(name: str, token: str, issue: Issue, assignee: str):
     assignees_names = list(map(lambda u: u.login, issue.assignees))

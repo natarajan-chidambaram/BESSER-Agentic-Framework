@@ -1,5 +1,6 @@
 from typing import Any
 
+
 class User:
     def __init__(self, api_payload):
         self._id: int = api_payload['id']
@@ -32,6 +33,7 @@ class User:
     def repos_url(self) -> str:
         """str: The user repos_url."""
         return self._repos_url
+
 
 class Issue:
     def __init__(self, api_payload):

@@ -9,7 +9,7 @@ from besser.agent.core.agent import Agent
 from besser.agent.core.session import Session
 from besser.agent.exceptions.logger import logger
 from besser.agent.library.event.event_library import github_event_matched
-from besser.agent.platforms.github.webooks_events import StarCreated, StarDeleted
+from besser.agent.platforms.github.github_webhooks_events import StarCreated, StarDeleted
 
 # Configure the logging module (optional)
 logger.setLevel(logging.INFO)
@@ -28,9 +28,6 @@ idle = agent.new_state('idle')
 star_state = agent.new_state('star_state')
 unstar_state = agent.new_state('unstar_state')
 
-# GLOBAL VARIABLES
-
-count = 0
 
 # STATES BODIES' DEFINITION + TRANSITIONS
 
@@ -44,9 +41,8 @@ agent.set_global_fallback_body(global_fallback_body)
 
 
 def init_body(session: Session):
-    global count
-    payload = github_platform.getitem(f'/repos/USER/REPOSITORY')
-    count = payload['stargazers_count']
+    payload = github_platform.getitem(f'/repos/mgv99/4enRaya_Haskell')
+    session.set('star_count', payload['stargazers_count'])
 
 
 init.set_body(init_body)
@@ -54,17 +50,17 @@ init.go_to(idle)
 
 
 def idle_body(session: Session):
-    print(f'The repo has {count} stars currently')
+    print(f'The repo has {session.get("star_count")} stars currently')
 
 
 idle.set_body(idle_body)
-idle.when_event_go_to(github_event_matched,   star_state, {'event':StarCreated()})
-idle.when_event_go_to(github_event_matched, unstar_state, {'event':StarDeleted()})
+idle.when_event_go_to(github_event_matched, star_state, {'event': StarCreated()})
+idle.when_event_go_to(github_event_matched, unstar_state, {'event': StarDeleted()})
 
 
 def star_body(session: Session):
-    global count
-    count = count + 1
+    star_count = session.get('star_count')
+    session.set('star_count', star_count + 1)
 
 
 star_state.set_body(star_body)
@@ -72,8 +68,8 @@ star_state.go_to(idle)
 
 
 def unstar_body(session: Session):
-    global count
-    count = count - 1
+    star_count = session.get('star_count')
+    session.set('star_count', star_count - 1)
 
 
 unstar_state.set_body(unstar_body)

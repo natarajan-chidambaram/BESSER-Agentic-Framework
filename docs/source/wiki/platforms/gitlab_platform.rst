@@ -1,5 +1,5 @@
 GitLab platform
-=================
+===============
 
 The GitLab Platform allows an agent to receive events from
 `GitLab's webhooks <https://docs.gitlab.com/ee/user/project/integrations/webhook_events.html>`_
@@ -13,6 +13,7 @@ library, which is an asynchronous GitLab API wrapper for Python.
 
     There are some properties the agent needs in order to properly set GitLab and webhook connections. More details in
     the :any:`configuration properties <properties-gitlab_platform>` documentation.
+
 
 How to use it
 -------------

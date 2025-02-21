@@ -1,5 +1,5 @@
 github_platform
-==================
+===============
 
 .. automodule:: besser.agent.platforms.github.github_platform
    :members:
