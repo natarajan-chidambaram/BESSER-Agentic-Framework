@@ -50,7 +50,7 @@ class LLMHuggingFace(LLM):
 
     def __init__(self, agent: 'Agent', name: str, parameters: dict, num_previous_messages: int = 1,
                  global_context: str = None):
-        super().__init__(agent.nlp_engine, name, parameters, global_context)
+        super().__init__(agent, name, parameters, global_context)
         self.pipe = None
         self.num_previous_messages: int = num_previous_messages
 
@@ -99,8 +99,6 @@ class LLMHuggingFace(LLM):
             for message in chat_history
             if message.type in [MessageType.STR, MessageType.LOCATION]
         ]
-        if not messages:
-            messages.append({'role': 'user', 'content': session.message})
         messages = merge_llm_consecutive_messages(context_messages + messages)
         outputs = self.pipe(messages, return_full_text=False, **parameters)
         answer = outputs[0]['generated_text']

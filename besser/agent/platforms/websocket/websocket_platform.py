@@ -4,6 +4,7 @@ import base64
 import inspect
 import json
 import os
+import time
 from datetime import datetime
 
 import numpy as np
@@ -15,6 +16,7 @@ from pandas import DataFrame
 from websockets.exceptions import ConnectionClosedError
 from websockets.sync.server import ServerConnection, WebSocketServer, serve
 
+from besser.agent.library.transition.events.base_events import ReceiveMessageEvent, ReceiveFileEvent
 from besser.agent.core.message import Message, MessageType
 from besser.agent.core.session import Session
 from besser.agent.exceptions.exceptions import PlatformMismatchError
@@ -40,6 +42,11 @@ except ImportError:
     logger.warning("plotly dependencies in WebSocketPlatform could not be imported. You can install them from "
                    "the requirements/requirements-extras.txt file")
 
+try:
+    import librosa
+except ImportError:
+    logger.warning("librosa dependencies in WebSocketPlatform could not be imported. You can install them from "
+                   "the requirements/requirements-extras.txt file")
 
 class WebSocketPlatform(Platform):
     """The WebSocket Platform allows an agent to communicate with the users using the
@@ -90,16 +97,32 @@ class WebSocketPlatform(Platform):
                         raise ConnectionClosedError(None, None)
                     payload: Payload = Payload.decode(payload_str)
                     if payload.action == PayloadAction.USER_MESSAGE.value:
-                        self._agent.receive_message(session.id, payload.message)
+                        event: ReceiveMessageEvent = ReceiveMessageEvent.create_event_from(
+                            message=payload.message,
+                            session=session,
+                            human=True)
+                        self._agent.receive_event(event)
                     elif payload.action == PayloadAction.USER_VOICE.value:
                         # Decode the base64 string to get audio bytes
                         audio_bytes = base64.b64decode(payload.message.encode('utf-8'))
-                        message = self._agent.nlp_engine.speech2text(audio_bytes)
-                        self._agent.receive_message(session.id, message)
+                        message = self._agent.nlp_engine.speech2text(session, audio_bytes)
+                        event: ReceiveMessageEvent = ReceiveMessageEvent.create_event_from(
+                            message=message,
+                            session=session,
+                            human=True)
+                        self._agent.receive_event(event)
                     elif payload.action == PayloadAction.USER_FILE.value:
-                        self._agent.receive_file(session.id, File.decode(payload.message))
+                        event: ReceiveFileEvent = ReceiveFileEvent(
+                            file=File.decode(payload.message),
+                            session_id=session.id,
+                            human=True)
+                        self._agent.receive_event(event)
                     elif payload.action == PayloadAction.AGENT_REPLY_STR.value:
-                        self._agent.receive_message(session.id, payload.message)
+                        event: ReceiveMessageEvent = ReceiveMessageEvent.create_event_from(
+                            message=payload.message,
+                            session=session,
+                            human=False)
+                        self._agent.receive_event(event)
                     elif payload.action == PayloadAction.RESET.value:
                         self._agent.reset(session.id)
             except ConnectionClosedError:
@@ -152,12 +175,12 @@ class WebSocketPlatform(Platform):
         for conn_id in list(self._connections.keys()):
             conn = self._connections[conn_id]
             conn.close_socket()
+        while self._connections:
+            time.sleep(0.05)
         self._websocket_server.shutdown()
         logger.info(f'{self._agent.name}\'s WebSocketPlatform stopped')
 
     def _send(self, session_id, payload: Payload) -> None:
-        session = self._agent.get_or_create_session(session_id=session_id, platform=self)
-        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         if session_id in self._connections:
             conn = self._connections[session_id]
             conn.send(json.dumps(payload, cls=PayloadEncoder))
@@ -168,6 +191,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.STR, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_STR,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_markdown(self, session: Session, message: str) -> None:
@@ -182,6 +206,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.MARKDOWN, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_MARKDOWN,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_html(self, session: Session, message: str) -> None:
@@ -196,6 +221,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.HTML, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_HTML,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
         
     def reply_file(self, session: Session, file: File) -> None:
@@ -210,6 +236,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.FILE, content=file.get_json_string(), is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_FILE,
                           message=file.to_dict())
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_image(self, session: Session, img: np.ndarray) -> None:
@@ -229,6 +256,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.FILE, content=base64_img, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_IMAGE,
                           message=base64_img)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_dataframe(self, session: Session, df: DataFrame) -> None:
@@ -245,6 +273,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.DATAFRAME, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_DF,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_options(self, session: Session, options: list[str]):
@@ -264,6 +293,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.OPTIONS, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_OPTIONS,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_plotly(self, session: Session, plot: plotly.graph_objs.Figure) -> None:
@@ -279,6 +309,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.PLOTLY, content=message, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_PLOTLY,
                           message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_location(self, session: Session, latitude: float, longitude: float) -> None:
@@ -295,6 +326,7 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.LOCATION, content=location_dict, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_LOCATION,
                           message=location_dict)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)
 
     def reply_rag(self, session: Session, rag_message: RAGMessage) -> None:
@@ -310,4 +342,73 @@ class WebSocketPlatform(Platform):
         session.save_message(Message(t=MessageType.RAG_ANSWER, content=rag_message_dict, is_user=False, timestamp=datetime.now()))
         payload = Payload(action=PayloadAction.AGENT_REPLY_RAG,
                           message=rag_message_dict)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
+        self._send(session.id, payload)
+
+    def reply_speech(self, session: Session, message: str, audio_speed: float = None) -> None:
+        """Send an audio reply to a specific user.
+
+        The text message is converted to speech and sent to the user. Before being sent, the audio is encoded as a
+        Base64 string. This must be taken into account when decoding the audio on the client side.
+
+        Args:
+            session (Session): the user session
+            message (str): the text message to be converted to speech and sent to the user.
+            audio_speed (float, optional): The speed of the audio. If not provided, the speed is retrieved from the
+            session, or defaults to 1.0. 0.5 is half speed, 2.0 is double speed, etc. Defaults to None.
+        """
+        
+        audio_dict = session._agent.nlp_engine.text2speech(session, message)
+        audio_array = audio_dict['audio']
+        sample_rate = audio_dict['sampling_rate']
+        dtype = audio_array.dtype
+        shape = audio_array.shape
+
+        # TODO: the speed up / slowed down audio sounds like in an echo chamber, not so good
+        # Adjust audio speed if needed, preserving pitch (avoid chipmunk effect)
+        if audio_speed and audio_speed != 1.0:
+            # librosa expects float32 audio
+            audio_array = audio_array.astype(np.float32)
+
+            if audio_array.ndim == 1:
+                # Mono audio
+                audio_array = librosa.effects.time_stretch(audio_array, rate=audio_speed)
+
+            elif audio_array.ndim == 2:
+                # Multi-channel audio: librosa doesn't support stereo directly,
+                # so apply time_stretch per channel and pad to equal lengths if needed
+                channels = []
+                for ch in range(audio_array.shape[0]):
+                    stretched = librosa.effects.time_stretch(audio_array[ch], rate=audio_speed)
+                    channels.append(stretched)
+                
+                # Find the length of the longest stretched channel
+                max_len = max([c.shape[0] for c in channels])
+                
+                # Pad shorter channels with zeros to match
+                channels = [np.pad(c, (0, max_len - c.shape[0])) for c in channels]
+                
+                audio_array = np.stack(channels, axis=0)
+
+            # Update shape and dtype after speed change
+            shape = audio_array.shape
+            dtype = audio_array.dtype
+
+        audio_array_contiguous = np.ascontiguousarray(audio_array)
+        audio_bytes = audio_array_contiguous.tobytes()
+        base64_bytes = base64.b64encode(audio_bytes)
+        base64_string_audio = base64_bytes.decode('utf-8')
+
+        message = {
+            "audio_data_base64": base64_string_audio,
+            "metadata": {
+                "sample_rate": sample_rate,
+                "dtype": str(dtype),
+                "shape": shape
+            }
+        }
+
+        session.save_message(Message(t=MessageType.AUDIO, content=message, is_user=False, timestamp=datetime.now()))
+        payload = Payload(action=PayloadAction.AGENT_REPLY_AUDIO, message=message)
+        payload.message = self._agent.process(session=session, message=payload.message, is_user_message=False)
         self._send(session.id, payload)

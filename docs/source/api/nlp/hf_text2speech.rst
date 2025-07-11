@@ -1,7 +1,7 @@
-event_template
+hf_text2speech
 ==============
 
-.. automodule:: besser.agent.library.event.event_template
+.. automodule:: besser.agent.nlp.text2speech.hf_text2speech
    :members:
    :private-members:
    :undoc-members:
